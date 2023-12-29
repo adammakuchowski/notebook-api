@@ -1,6 +1,6 @@
 import express, {
   Request,
-  Response,
+  Response
 } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
@@ -10,7 +10,7 @@ import winston from 'winston'
 import appConfig from './configs/appConfig'
 import corsOptions from './configs/corsConfig'
 import loggerConfig from './configs/winstonConfig'
-import sampleRouter from './api/routes/sampleRouter'
+import noteRouter from './api/routes/noteRouter'
 import errorHandler from './middlewares/errorHandler'
 import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response): void => {
   res.send('Every day you must ask yourself: Did you do enough?')
 })
 
-app.use('/sampleRouter', sampleRouter)
+app.use('/note', noteRouter)
 
 app.use(notFound)
 app.use(errorHandler)
