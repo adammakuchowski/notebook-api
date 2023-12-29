@@ -3,7 +3,6 @@ import app from '../app'
 
 describe('GET /', () => {
   it('responds with a default server message', async () => {
-
     const response = await request(app)
       .get('/')
       .set('Accept', 'application/json')

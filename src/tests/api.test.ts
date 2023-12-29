@@ -3,7 +3,6 @@ import app from '../app'
 
 describe('GET /sampleRouter/getSampleData', () => {
   it('responds with a sample data json', async () => {
-
     const response = await request(app)
       .get('/sampleRouter/getSampleData')
       .set('Accept', 'application/json')
@@ -16,8 +15,8 @@ describe('GET /sampleRouter/getSampleData', () => {
 describe('POST /sampleRouter/createSampleData', () => {
   it('responds with a created sample data json', async () => {
     const sampleData = {
-      id: "1",
-      name: "some name"
+      id: '1',
+      name: 'some name'
     }
 
     const response = await request(app)

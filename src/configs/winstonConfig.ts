@@ -7,7 +7,7 @@ const loggerConfig = {
     winston.format.simple()
   ),
   transports: [
-    new winston.transports.Console(),
+    new winston.transports.Console()
   ]
 }
 
