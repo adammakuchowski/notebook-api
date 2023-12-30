@@ -2,19 +2,19 @@ import express from 'express'
 
 import {
   getNote,
-  createNote,
+  createNote
 } from '../controllers/noteController'
 
 const router = express.Router()
 
 router.get(
   '/getNote',
-  getNote,
+  getNote
 )
 
 router.post(
   '/createNote',
-  createNote,
+  createNote
 )
 
 export default router

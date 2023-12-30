@@ -8,14 +8,14 @@ import {getNoteById, createNewNote} from '../services/noteService'
 import {logger} from '../../app'
 import {CreateNoteBody, GetNoteBody} from '../types/note'
 
-export const getNote = (
+export const getNote = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     const {noteId}: GetNoteBody = req.body
-    const note = getNoteById(noteId)
+    const note = await getNoteById(noteId)
 
     res
       .status(200)

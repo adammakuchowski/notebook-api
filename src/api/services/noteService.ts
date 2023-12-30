@@ -3,7 +3,7 @@ import {Document} from 'mongoose'
 import NoteModel from '../../db/models/noteModel'
 import {NoteData} from '../types/note'
 
-export const getNoteById = (noteId: string): unknown => {
+export const getNoteById = async (noteId: string): Promise<Document> => {
   return {}
 }
 
