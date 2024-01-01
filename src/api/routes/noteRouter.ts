@@ -1,4 +1,5 @@
 import express from 'express'
+import withAsyncHandler from 'express-async-handler'
 
 import {
   getNote,
@@ -9,12 +10,12 @@ const router = express.Router()
 
 router.get(
   '/getNote',
-  getNote
+  withAsyncHandler(getNote)
 )
 
 router.post(
   '/createNote',
-  createNote
+  withAsyncHandler(createNote)
 )
 
 export default router
