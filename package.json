@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npx tsc",
     "dev": "npx ts-node ./src/app.ts",
-    "test": "jest --config jest.config.js"
+    "test": "jest --config jest.config.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "keywords": [],
   "author": "",
