@@ -3,7 +3,8 @@ import withAsyncHandler from 'express-async-handler'
 
 import {
   getNote,
-  createNote
+  createNote,
+  getAllNotes
 } from '../controllers/noteController'
 
 const router = express.Router()
@@ -11,6 +12,11 @@ const router = express.Router()
 router.get(
   '/getNote',
   withAsyncHandler(getNote)
+)
+
+router.get(
+  '/getAllNotes',
+  withAsyncHandler(getAllNotes)
 )
 
 router.post(

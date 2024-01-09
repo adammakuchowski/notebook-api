@@ -4,9 +4,16 @@ import {
   Response
 } from 'express'
 
-import {getNoteById, createNewNote} from '../services/noteService'
 import {logger} from '../../app'
-import {CreateNoteBody, GetNoteBody} from '../types/note'
+import {
+  getNoteById,
+  createNewNote,
+  findAllNotes
+} from '../services/noteService'
+import {
+  CreateNoteBody,
+  GetNoteBody
+} from '../types/note'
 
 export const getNote = async (
   req: Request,
@@ -14,14 +21,32 @@ export const getNote = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {noteId}: GetNoteBody = req.body
-    const note = await getNoteById(noteId)
+    const {_id}: GetNoteBody = req.body
+    const note = await getNoteById(_id)
 
     res
       .status(200)
       .json(note)
   } catch (error: any) {
     logger.error(`[getNote] error: ${error.message}`)
+
+    next(error)
+  }
+}
+
+export const getAllNotes = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const allNotes = await findAllNotes()
+
+    res
+      .status(200)
+      .json(allNotes)
+  } catch (error: any) {
+    logger.error(`[getAllNotes] error: ${error.message}`)
 
     next(error)
   }
