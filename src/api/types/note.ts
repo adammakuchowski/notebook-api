@@ -6,5 +6,5 @@ export type NoteData = {
 export type CreateNoteBody = NoteData
 
 export type GetNoteBody = {
-  noteId: string;
+  _id: string;
 }
