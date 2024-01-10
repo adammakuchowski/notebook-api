@@ -8,6 +8,7 @@ interface DatabaseConfig {
   username: string;
   password: string;
   name: string;
+  mongoUrl?: string;
 }
 
 interface AppConfig {
@@ -22,7 +23,8 @@ const appConfig: AppConfig = {
     port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 27017,
     username: process.env.DB_USERNAME ?? 'user',
     password: process.env.DB_PASSWORD ?? 'password',
-    name: process.env.DB_NAME ?? 'my_database'
+    name: process.env.DB_NAME ?? 'my_database',
+    mongoUrl: process.env.MONGO_URL
   }
 }
 
