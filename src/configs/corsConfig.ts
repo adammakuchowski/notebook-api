@@ -6,7 +6,7 @@ interface CorsOptions {
 }
 
 const corsOptions: CorsOptions = {
-  origin: ['http://localhost:3000'],
+  origin: ['http://localhost:3000', 'http://localhost:5173'],
   optionsSuccessStatus: 200,
   allowedHeaders: ['Authorization', 'Content-Type'],
   methods: 'GET,POST,PUT,DELETE'

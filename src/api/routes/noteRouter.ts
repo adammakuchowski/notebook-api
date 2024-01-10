@@ -10,7 +10,7 @@ import {
 const router = express.Router()
 
 router.get(
-  '/getNote',
+  '/getNote/:id',
   withAsyncHandler(getNote)
 )
 
