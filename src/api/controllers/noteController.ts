@@ -11,8 +11,7 @@ import {
   findAllNotes
 } from '../services/noteService'
 import {
-  CreateNoteBody,
-  GetNoteBody
+  CreateNoteBody
 } from '../types/note'
 
 export const getNote = async (
@@ -21,8 +20,8 @@ export const getNote = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {_id}: GetNoteBody = req.body
-    const note = await getNoteById(_id)
+    const {id} = req.params
+    const note = await getNoteById(id)
 
     res
       .status(200)
