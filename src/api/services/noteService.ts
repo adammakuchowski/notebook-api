@@ -21,3 +21,16 @@ export const findAllNotes = async (): Promise<NoteData[]> => {
 
   return allNotes
 }
+
+export const softDeleteNoteById = async (_id: string): Promise<any> => {
+  const currentDate = new Date()
+  const result = await NoteModel.findByIdAndUpdate({_id}, {$set: {deletedAt: currentDate}}, {new: true, lean: true})
+
+  return result
+}
+
+export const deleteNoteById = async (_id: string): Promise<any> => {
+  const result = await NoteModel.findByIdAndDelete({_id})
+
+  return result
+}

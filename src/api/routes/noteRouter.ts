@@ -4,7 +4,9 @@ import withAsyncHandler from 'express-async-handler'
 import {
   getNote,
   createNote,
-  getAllNotes
+  getAllNotes,
+  deleteNote,
+  softDeleteNote
 } from '../controllers/noteController'
 
 const router = express.Router()
@@ -22,6 +24,16 @@ router.get(
 router.post(
   '/createNote',
   withAsyncHandler(createNote)
+)
+
+router.patch(
+  '/softDeleteNote/:id',
+  withAsyncHandler(softDeleteNote)
+)
+
+router.delete(
+  '/deleteNote/:id',
+  withAsyncHandler(deleteNote)
 )
 
 export default router
