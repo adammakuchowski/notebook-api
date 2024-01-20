@@ -30,6 +30,7 @@
         "@typescript-eslint/consistent-type-definitions": "off",
         "@typescript-eslint/consistent-type-imports": "off",
         "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/block-spacing": "off"
+        "@typescript-eslint/block-spacing": "off",
+        "@typescript-eslint/no-explicit-any": "error"
     }
 }
