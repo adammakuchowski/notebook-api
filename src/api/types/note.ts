@@ -5,3 +5,9 @@ export type NoteData = {
 }
 
 export type CreateNoteBody = NoteData
+
+export type EditNote = NoteData & {
+  id: string;
+}
+
+export type EditNoteBody = EditNote

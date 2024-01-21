@@ -6,7 +6,8 @@ import {
   createNote,
   getAllNotes,
   deleteNote,
-  softDeleteNote
+  softDeleteNote,
+  editNote
 } from '../controllers/noteController'
 
 const router = express.Router()
@@ -24,6 +25,11 @@ router.get(
 router.post(
   '/createNote',
   withAsyncHandler(createNote)
+)
+
+router.put(
+  '/editNote',
+  withAsyncHandler(editNote)
 )
 
 router.patch(
