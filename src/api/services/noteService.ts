@@ -1,7 +1,7 @@
 import {Document} from 'mongoose'
 
 import NoteModel from '../../db/models/noteModel'
-import {EditNote, NoteData} from '../types/note'
+import {EditNote, NewNoteData, NoteData} from '../types/note'
 
 export const getNoteById = async (_id: string): Promise<NoteData | null> => {
   const note = await NoteModel.findOne({
@@ -12,7 +12,7 @@ export const getNoteById = async (_id: string): Promise<NoteData | null> => {
   return note
 }
 
-export const createNewNote = async ({title, text}: NoteData): Promise<Document> => {
+export const createNewNote = async ({title, text}: NewNoteData): Promise<Document> => {
   const newNoteModel = new NoteModel({title, text})
   const newNote = await newNoteModel.save()
 
@@ -27,9 +27,10 @@ export const findAllNotes = async (): Promise<NoteData[]> => {
   return allNotes
 }
 
-export const editNoteById = async ({id, title, text}: EditNote): Promise<Document | null> => {
+export const editNoteById = async ({id, title, text, userId}: EditNote): Promise<Document | null> => {
   const result = await NoteModel.findByIdAndUpdate({
-    _id: id
+    _id: id,
+    userId
   }, {
     $set: {
       title,

@@ -61,9 +61,9 @@ export const createNote = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {title, text}: CreateNoteBody = req.body
+    const {title, text, userId}: CreateNoteBody = req.body
 
-    const newNoteData = await createNewNote({title, text})
+    const newNoteData = await createNewNote({title, text, userId})
     logger.info('[createNote] new note successfully created')
 
     res
@@ -82,8 +82,8 @@ export const editNote = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {id, title, text}: EditNoteBody = req.body
-    const result = await editNoteById({id, title, text})
+    const {id, title, text, userId}: EditNoteBody = req.body
+    const result = await editNoteById({id, title, text, userId})
 
     logger.info(`[editNote] note id:${id} successfully edited`)
 
