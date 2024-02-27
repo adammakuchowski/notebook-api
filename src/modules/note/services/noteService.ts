@@ -1,9 +1,9 @@
 import {Document} from 'mongoose'
 
-import NoteModel from '../../db/models/noteModel'
-import {EditNote, NewNoteData, NoteData} from '../types/note'
+import NoteModel from '../../../db/models/noteModel'
+import {EditNote, NewNoteData, Note} from '../types/note'
 
-export const getNoteById = async (_id: string): Promise<NoteData | null> => {
+export const getNoteById = async (_id: string): Promise<Note | null> => {
   const note = await NoteModel.findOne({
     _id,
     deletedAt: {$eq: null}
@@ -19,7 +19,7 @@ export const createNewNote = async ({title, text}: NewNoteData): Promise<Documen
   return newNote
 }
 
-export const findAllNotes = async (): Promise<NoteData[]> => {
+export const findAllNotes = async (): Promise<Note[]> => {
   const allNotes = await NoteModel.find({
     deletedAt: {$eq: null}
   }).limit(100).lean()

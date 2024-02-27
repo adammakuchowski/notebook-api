@@ -1,16 +1,26 @@
 import mongoose from 'mongoose'
 
-import {NoteData} from '../../api/types/note'
+import {Note} from '../../modules/note/types/note'
 
-const noteDataSchema = new mongoose.Schema<NoteData>({
-  title: {type: String, required: true},
-  text: {type: String},
-  userId: {type: String, required: true},
-  deletedAt: {type: Date}
+const noteSchema = new mongoose.Schema<Note>({
+  title: {
+    type: String,
+    required: true
+  },
+  text: {
+    type: String
+  },
+  userId: {
+    type: String,
+    required: true
+  },
+  deletedAt: {
+    type: Date
+  }
 }, {
   timestamps: true
 })
 
-const NoteDataModel = mongoose.model<NoteData>('NoteData', noteDataSchema, 'notes')
+const NoteModel = mongoose.model<Note>('Note', noteSchema, 'notes')
 
-export default NoteDataModel
+export default NoteModel

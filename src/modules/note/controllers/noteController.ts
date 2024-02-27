@@ -4,7 +4,7 @@ import {
   Response
 } from 'express'
 
-import {logger} from '../../app'
+import {logger} from '../../../app'
 import {
   getNoteById,
   createNewNote,

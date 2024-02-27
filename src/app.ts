@@ -10,10 +10,12 @@ import winston from 'winston'
 import appConfig from './configs/appConfig'
 import corsOptions from './configs/corsConfig'
 import loggerConfig from './configs/winstonConfig'
-import noteRouter from './api/routes/noteRouter'
+
 import errorHandler from './middlewares/errorHandler'
 import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
+import {authRouter} from './core/auth'
+import {noteRouter} from './modules/note'
 
 const {port} = appConfig
 export const logger = winston.createLogger(loggerConfig)
@@ -30,6 +32,7 @@ app.get('/', (req: Request, res: Response): void => {
   res.send('Every day you must ask yourself: Did you do enough?')
 })
 
+app.use('/auth', authRouter)
 app.use('/note', noteRouter)
 
 app.use(notFound)
