@@ -10,36 +10,34 @@ import {
   editNote
 } from '../controllers/noteController'
 
-const router = express.Router()
+export const noteRouter = express.Router()
 
-router.get(
+noteRouter.get(
   '/getNote/:id',
   withAsyncHandler(getNote)
 )
 
-router.get(
+noteRouter.get(
   '/getAllNotes',
   withAsyncHandler(getAllNotes)
 )
 
-router.post(
+noteRouter.post(
   '/createNote',
   withAsyncHandler(createNote)
 )
 
-router.put(
+noteRouter.put(
   '/editNote',
   withAsyncHandler(editNote)
 )
 
-router.patch(
+noteRouter.patch(
   '/softDeleteNote/:id',
   withAsyncHandler(softDeleteNote)
 )
 
-router.delete(
+noteRouter.delete(
   '/deleteNote/:id',
   withAsyncHandler(deleteNote)
 )
-
-export default router
