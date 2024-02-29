@@ -10,13 +10,13 @@ export const authRouter = express.Router()
 
 authRouter.post(
   '/register',
-  validationRequest(userBodySchema, 'body'),
+  validationRequest(userBodySchema),
   withAsyncHandler(registerUser)
 )
 
 authRouter.post(
   '/login',
-  validationRequest(userBodySchema, 'body'),
+  validationRequest(userBodySchema),
   withAsyncHandler(loginUser)
 )
 
