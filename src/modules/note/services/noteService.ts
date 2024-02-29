@@ -3,17 +3,18 @@ import {Document} from 'mongoose'
 import NoteModel from '../../../db/models/noteModel'
 import {EditNote, NewNoteData, Note} from '../types/note'
 
-export const getNoteById = async (_id: string): Promise<Note | null> => {
+export const getNoteById = async (_id: string, userId: string): Promise<Note | null> => {
   const note = await NoteModel.findOne({
     _id,
+    userId,
     deletedAt: {$eq: null}
   }).lean()
 
   return note
 }
 
-export const createNewNote = async ({title, text}: NewNoteData): Promise<Document> => {
-  const newNoteModel = new NoteModel({title, text})
+export const createNewNote = async ({title, text, userId}: NewNoteData): Promise<Document> => {
+  const newNoteModel = new NoteModel({title, text, userId})
   const newNote = await newNoteModel.save()
 
   return newNote

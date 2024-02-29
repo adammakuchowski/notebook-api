@@ -1,15 +1,10 @@
 import {Request, Response, NextFunction} from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, {JwtPayload, VerifyErrors} from 'jsonwebtoken'
 
 import appConfig from '../configs/appConfig'
 
-interface User {
-  id: string;
-  [key: string]: unknown;
-}
-
 interface AuthRequest extends Request {
-  user?: User;
+  user?: string | JwtPayload;
 }
 
 export const authenticateToken = (
@@ -28,9 +23,11 @@ export const authenticateToken = (
 
   const token = authorizationHeader.replace('Bearer ', '')
 
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err: VerifyErrors | null, user?: JwtPayload | string) => {
     if (err) {
-      return res.status(403).json({message: 'Invalid JWT token.'})
+      res.status(403).json({message: 'Invalid JWT token.'})
+
+      return
     }
     req.user = user
 

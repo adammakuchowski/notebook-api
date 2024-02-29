@@ -8,7 +8,9 @@ export type Note = {
 
 export type CreateNoteBody = Omit<Note, 'id'>
 
-export type NewNoteData = Omit<Note, 'id'>
+export type NewNoteData = Omit<Note, 'id'> & {
+  userId?: string;
+}
 
 export type EditNote = Note
 
