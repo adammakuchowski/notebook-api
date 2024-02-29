@@ -2,13 +2,14 @@ import {Document} from 'mongoose'
 
 import NoteModel from '../../../db/models/noteModel'
 import {EditNote, NewNoteData, Note} from '../types/note'
+import {noteProjection} from '../constatns'
 
 export const getNoteById = async (_id: string, userId: string): Promise<Note | null> => {
   const note = await NoteModel.findOne({
     _id,
     userId,
     deletedAt: {$eq: null}
-  }).lean()
+  }, noteProjection).lean()
 
   return note
 }
@@ -20,10 +21,11 @@ export const createNewNote = async ({title, text, userId}: NewNoteData): Promise
   return newNote
 }
 
-export const findAllNotes = async (): Promise<Note[]> => {
+export const findAllNotes = async (userId: string): Promise<Note[]> => {
   const allNotes = await NoteModel.find({
+    userId,
     deletedAt: {$eq: null}
-  }).limit(100).lean()
+  }, noteProjection).limit(100).lean()
 
   return allNotes
 }
@@ -45,10 +47,11 @@ export const editNoteById = async ({id, title, text, userId}: EditNote): Promise
   return result
 }
 
-export const softDeleteNoteById = async (_id: string): Promise<Document | null> => {
+export const softDeleteNoteById = async (_id: string, userId: string): Promise<Document | null> => {
   const currentDate = new Date()
   const result = await NoteModel.findByIdAndUpdate({
-    _id
+    _id,
+    userId
   }, {
     $set: {
       deletedAt: currentDate

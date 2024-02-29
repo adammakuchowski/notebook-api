@@ -54,7 +54,15 @@ export const getAllNotes = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const allNotes = await findAllNotes()
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const allNotes = await findAllNotes(userId)
 
     res
       .status(200)
@@ -130,7 +138,15 @@ export const softDeleteNote = async (
 ): Promise<void> => {
   try {
     const {id} = req.params
-    const result = await softDeleteNoteById(id)
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const result = await softDeleteNoteById(id, userId)
 
     logger.info(`[softDeleteNote] note id:${id} successfully soft deleted`)
 

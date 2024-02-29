@@ -16,7 +16,7 @@ export const authenticateToken = (
   const {authorization: {secretKey}} = appConfig
 
   if (!authorizationHeader) {
-    res.status(401).json({message: 'Access denied - missing JWT token.'})
+    res.status(401).json({message: 'Access denied - missing JWT token'})
 
     return
   }
@@ -25,7 +25,7 @@ export const authenticateToken = (
 
   jwt.verify(token, secretKey, (err: VerifyErrors | null, user?: JwtPayload | string) => {
     if (err) {
-      res.status(403).json({message: 'Invalid JWT token.'})
+      res.status(403).json({message: 'Invalid JWT token'})
 
       return
     }

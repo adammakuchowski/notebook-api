@@ -31,7 +31,7 @@ noteRouter.get(
 noteRouter.post(
   '/createNote',
   authenticateToken,
-  validationRequest(noteBodySchema, 'params'),
+  validationRequest(noteBodySchema),
   withAsyncHandler(createNote)
 )
 
