@@ -1,6 +1,5 @@
 import {
   NextFunction,
-  Request,
   Response
 } from 'express'
 
@@ -17,15 +16,27 @@ import {
   CreateNoteBody,
   EditNoteBody
 } from '../types/note'
+import {AuthRequest} from '../../../core/auth/types/auth'
+import {sendBadRequest} from '../../../core/utils/response'
 
 export const getNote = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const {id} = req.params
-    const note = await getNoteById(id)
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const note = await getNoteById(id, userId)
+
+    console.log(userId)
 
     res
       .status(200)
@@ -38,12 +49,20 @@ export const getNote = async (
 }
 
 export const getAllNotes = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const allNotes = await findAllNotes()
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const allNotes = await findAllNotes(userId)
 
     res
       .status(200)
@@ -56,12 +75,19 @@ export const getAllNotes = async (
 }
 
 export const createNote = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {title, text, userId}: CreateNoteBody = req.body
+    const {title, text}: CreateNoteBody = req.body
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
 
     const newNoteData = await createNewNote({title, text, userId})
     logger.info('[createNote] new note successfully created')
@@ -77,12 +103,20 @@ export const createNote = async (
 }
 
 export const editNote = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {id, title, text, userId}: EditNoteBody = req.body
+    const {id, title, text}: EditNoteBody = req.body
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
     const result = await editNoteById({id, title, text, userId})
 
     logger.info(`[editNote] note id:${id} successfully edited`)
@@ -98,13 +132,21 @@ export const editNote = async (
 }
 
 export const softDeleteNote = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const {id} = req.params
-    const result = await softDeleteNoteById(id)
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const result = await softDeleteNoteById(id, userId)
 
     logger.info(`[softDeleteNote] note id:${id} successfully soft deleted`)
 
@@ -119,7 +161,7 @@ export const softDeleteNote = async (
 }
 
 export const deleteNote = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

@@ -1,11 +1,16 @@
-import {Request, Response, NextFunction} from 'express'
+import {Response, NextFunction} from 'express'
 import {z} from 'zod'
 
 import {logger} from '../app'
+import {AuthRequest} from '../core/auth/types/auth'
 
-export const validationRequest = (schema: z.ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.body) {
+type RequestKeys = 'body' | 'params' | 'query'
+
+export const validationRequest = (schema: z.ZodSchema, key: RequestKeys = 'body') => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    const dataToValidate = req[key]
+
+    if (!dataToValidate) {
       const error = 'Invalid body'
 
       logger.error(error)
@@ -14,7 +19,7 @@ export const validationRequest = (schema: z.ZodSchema) => {
       })
     }
 
-    const result = schema.safeParse(req.body)
+    const result = schema.safeParse(dataToValidate)
 
     if (!result.success) {
       const error = result.error.issues.map((issue) => issue.message).join(', ')
