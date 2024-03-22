@@ -16,8 +16,8 @@ import {
   CreateNoteBody,
   EditNoteBody
 } from '../types/note'
-import {AuthRequest} from '../../../core/auth/types/auth'
-import {sendBadRequest} from '../../../core/utils/response'
+import {AuthRequest} from '../../../modules/auth/types/auth'
+import {sendBadRequest} from '../../../modules/utils/response'
 
 export const getNote = async (
   req: AuthRequest,

@@ -14,7 +14,7 @@ import loggerConfig from './configs/winstonConfig'
 import errorHandler from './middlewares/errorHandler'
 import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
-import {authRouter} from './core/auth'
+import {authRouter} from './modules/auth'
 import {noteRouter} from './modules/note'
 
 const {port} = appConfig
