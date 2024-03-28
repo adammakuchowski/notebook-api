@@ -7,7 +7,7 @@ export const canCreateDocument = async (
 ): Promise<boolean | undefined> => {
   try {
     if (!mongooseModel) {
-      throw new Error('No mongoose model provided. Cannot proceed.')
+      throw new Error('No mongoose model provided. Cannot proceed')
     }
     const documentsCount = await mongooseModel.countDocuments(filters)
 
