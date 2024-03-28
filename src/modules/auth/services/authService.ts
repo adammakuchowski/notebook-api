@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import UserModel, {User} from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'
 import {logger} from '../../../app'
+import RefreshTokenModel from '../../../db/models/refreshTokenModel'
 
 export const getUserByEmail = async (email: string): Promise<User | null> => {
   try {
@@ -60,5 +61,36 @@ export const createWebToken = async (id: string): Promise<string> => {
   } catch (error) {
     logger.error(`[createWebToken]: ${(error as Error).message}`)
     throw new Error('An error occurred while create the json web tekon.')
+  }
+}
+
+export const createRefreshToken = async (id: string): Promise<string> => {
+  try {
+    const {authorization: {secretKey}} = appConfig
+
+    return jwt.sign({id}, secretKey, {expiresIn: '7d'})
+  } catch (error) {
+    logger.error(`[createRefreshToken]: ${(error as Error).message}`)
+    throw new Error('An error occurred while create the json refresh tekon.')
+  }
+}
+
+export const saveRefreshToken = async (userId: string, refreshToken: string): Promise<void> => {
+  try {
+    const {authorization: {saltRounds}} = appConfig
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, saltRounds)
+
+    const newRefreshToken = new RefreshTokenModel({
+      userId,
+      refreshToken: hashedRefreshToken,
+      used: false
+    })
+
+    await newRefreshToken.save()
+
+    logger.info('Hashed refresh token saved successfully.')
+  } catch (error) {
+    logger.error(`[saveRefreshToken]: ${(error as Error).message}`)
+    throw new Error('Error saving hashed refresh token.')
   }
 }

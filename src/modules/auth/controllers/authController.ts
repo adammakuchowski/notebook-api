@@ -3,10 +3,12 @@ import {NextFunction, Request, Response} from 'express'
 import {logger} from '../../../app'
 import {
   comparePassword,
+  createRefreshToken,
   createUser,
   createWebToken,
   getUserByEmail,
-  hashPassword
+  hashPassword,
+  saveRefreshToken
 } from '../services/authService'
 import {canCreateDocument} from '../../../db/mongoUtils'
 import User from '../../../db/models/userModel'
@@ -62,7 +64,7 @@ export const loginUser = async (
     const {email, password}: UserPros = req.body
 
     const user = await getUserByEmail(email)
-    if (!user) {
+    if (!user?._id) {
       logger.warn(`[loginUser]: user with this email ${email} does not exists`)
 
       res
@@ -84,7 +86,9 @@ export const loginUser = async (
     }
 
     const {_id} = user
-    const token = await createWebToken(_id as string)
+    const token = await createWebToken(_id)
+    const refreshToken = await createRefreshToken(_id)
+    await saveRefreshToken(_id, refreshToken)
 
     res
       .status(200)
