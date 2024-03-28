@@ -1,9 +1,6 @@
-import mongoose, {Document} from 'mongoose'
+import mongoose from 'mongoose'
 
-export interface User extends Document<string> {
-  email: string;
-  password: string;
-}
+import {User} from '../../modules/auth/types/auth'
 
 const userSchema = new mongoose.Schema<User>({
   email: {
@@ -15,6 +12,11 @@ const userSchema = new mongoose.Schema<User>({
   password: {
     type: String,
     required: true
+  },
+  refreshToken: {
+    type: String,
+    required: true,
+    unique: true
   }
 }, {
   timestamps: true
