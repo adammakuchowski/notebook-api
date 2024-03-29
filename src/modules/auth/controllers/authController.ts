@@ -15,7 +15,11 @@ import {
 import {canCreateDocument} from '../../../db/mongoUtils'
 import User from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'
-import {RegisterUserPros, LoginUserPros, RefreshUserTokenProps} from '../types/auth'
+import {
+  RegisterUserPros,
+  LoginUserPros,
+  RefreshUserTokenProps
+} from '../types/auth'
 
 export const registerUser = async (
   req: Request,

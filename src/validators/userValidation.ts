@@ -7,3 +7,10 @@ export const userBodySchema = z.object({
     invalid_type_error: 'Password must be a string'
   })
 })
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string({
+    required_error: 'refreshToken is required',
+    invalid_type_error: 'refreshToken must be a string'
+  })
+})
