@@ -1,9 +1,14 @@
 import express from 'express'
 import withAsyncHandler from 'express-async-handler'
 
-import {loginUser, registerUser, verifyUser} from '../controllers/authController'
+import {
+  loginUser,
+  refreshUserToken,
+  registerUser,
+  verifyUser
+} from '../controllers/authController'
 import {validationRequest} from '../../../middlewares/validationRequest'
-import {userBodySchema} from '../../../validators/userValidation'
+import {refreshTokenSchema, userBodySchema} from '../../../validators/userValidation'
 import {authenticateToken} from '../../../middlewares/auth'
 
 export const authRouter = express.Router()
@@ -24,4 +29,11 @@ authRouter.get(
   '/verify',
   authenticateToken,
   verifyUser
+)
+
+authRouter.post(
+  '/refreshToken',
+  validationRequest(refreshTokenSchema),
+  authenticateToken,
+  withAsyncHandler(refreshUserToken)
 )
