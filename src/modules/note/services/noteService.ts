@@ -30,7 +30,7 @@ export const findAllNotes = async (userId: string): Promise<Note[]> => {
   return allNotes
 }
 
-export const editNoteById = async ({id, title, text, userId}: EditNote): Promise<Document | null> => {
+export const editNoteById = async ({id, title, text, userId}: EditNote): Promise<Note | null> => {
   const result = await NoteModel.findByIdAndUpdate({
     _id: id,
     userId
@@ -47,7 +47,7 @@ export const editNoteById = async ({id, title, text, userId}: EditNote): Promise
   return result
 }
 
-export const softDeleteNoteById = async (_id: string, userId: string): Promise<Document | null> => {
+export const softDeleteNoteById = async (_id: string, userId: string): Promise<Note | null> => {
   const currentDate = new Date()
   const result = await NoteModel.findByIdAndUpdate({
     _id,
