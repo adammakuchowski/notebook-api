@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema<User>({
   },
   refreshToken: {
     type: String,
-    required: true,
     unique: true
   }
 }, {
