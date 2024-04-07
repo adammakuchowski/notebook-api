@@ -1,6 +1,6 @@
 import {Document} from 'mongoose'
 
-import NoteModel from '../../../db/models/noteModel'
+import {NoteModel} from '../../../db/models/noteModel'
 import {EditNote, NewNoteData, Note} from '../types/note'
 import {noteProjection} from '../constatns'
 

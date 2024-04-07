@@ -13,9 +13,10 @@ import {
   verifyRefreshToken
 } from '../services/authService'
 import {canCreateDocument} from '../../../db/mongoUtils'
-import User from '../../../db/models/userModel'
+import {UserModel} from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'
 import {
+  User,
   RegisterUserPros,
   LoginUserPros,
   RefreshUserTokenProps
@@ -30,7 +31,7 @@ export const registerUser = async (
     const {email, password}: RegisterUserPros = req.body
     const {database: {userLimit}} = appConfig
 
-    const canCreate = await canCreateDocument(User, userLimit)
+    const canCreate = await canCreateDocument<User>(UserModel, userLimit)
     if (!canCreate) {
       throw new Error('Limit of user documents reached')
     }
