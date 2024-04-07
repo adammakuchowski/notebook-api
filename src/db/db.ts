@@ -12,7 +12,7 @@ export const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(DB_URL, dbOptions)
     logger.info('Connected to MongoDB')
-  } catch (error: any) {
-    logger.error(`Error connecting to MongoDB:' ${error.message}`)
+  } catch (error) {
+    logger.error(`Error connecting to MongoDB:' ${(error as Error).message}`)
   }
 }

@@ -1,7 +1,9 @@
+import {Model} from 'mongoose'
+
 import {logger} from '../app'
 
-export const canCreateDocument = async (
-  mongooseModel: any,
+export const canCreateDocument = async <T>(
+  mongooseModel: Model<T>,
   limit: number,
   filters = {}
 ): Promise<boolean | undefined> => {
@@ -12,7 +14,7 @@ export const canCreateDocument = async (
     const documentsCount = await mongooseModel.countDocuments(filters)
 
     return !(documentsCount >= limit)
-  } catch (error: any) {
-    logger.error(`[canCreateDocument]: ${error}`)
+  } catch (error) {
+    logger.error(`[canCreateDocument]:${(error as Error).message}`)
   }
 }

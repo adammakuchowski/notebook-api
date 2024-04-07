@@ -15,13 +15,10 @@ const userSchema = new mongoose.Schema<User>({
   },
   refreshToken: {
     type: String,
-    required: true,
     unique: true
   }
 }, {
   timestamps: true
 })
 
-const UserModel = mongoose.model<User>('User', userSchema, 'users')
-
-export default UserModel
+export const UserModel = mongoose.model<User>('User', userSchema, 'users')

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt, {JwtPayload} from 'jsonwebtoken'
 
-import UserModel from '../../../db/models/userModel'
+import {UserModel} from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'
 import {logger} from '../../../app'
 import {User} from '../types/auth'
