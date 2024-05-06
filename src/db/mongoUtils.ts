@@ -5,7 +5,7 @@ import {logger} from '../app'
 export const canCreateDocument = async <T>(
   mongooseModel: Model<T>,
   limit: number,
-  filters = {}
+  filters = {},
 ): Promise<boolean | undefined> => {
   try {
     if (!mongooseModel) {

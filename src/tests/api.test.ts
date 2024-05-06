@@ -16,7 +16,7 @@ describe('POST /sampleRouter/createSampleData', () => {
   it('responds with a created sample data json', async () => {
     const sampleData = {
       id: '1',
-      name: 'some name'
+      name: 'some name',
     }
 
     const response = await request(app)

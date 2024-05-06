@@ -6,7 +6,10 @@ import {AuthRequest} from '../modules/auth/types/auth'
 
 type RequestKeys = 'body' | 'params' | 'query'
 
-export const validationRequest = (schema: z.ZodSchema, key: RequestKeys = 'body') => {
+export const validationRequest = (
+  schema: z.ZodSchema,
+  key: RequestKeys = 'body',
+) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     const dataToValidate = req[key]
 
@@ -15,7 +18,7 @@ export const validationRequest = (schema: z.ZodSchema, key: RequestKeys = 'body'
 
       logger.error(error)
       return res.status(400).json({
-        error
+        error,
       })
     }
 
@@ -26,9 +29,7 @@ export const validationRequest = (schema: z.ZodSchema, key: RequestKeys = 'body'
 
       logger.error(error)
 
-      return res
-        .status(400)
-        .json({error})
+      return res.status(400).json({error})
     }
 
     next()

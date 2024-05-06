@@ -1,14 +1,6 @@
-import {
-  NextFunction,
-  Request,
-  Response
-} from 'express'
+import {NextFunction, Request, Response} from 'express'
 
-const notFound = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+const notFound = (req: Request, res: Response, next: NextFunction): void => {
   res.status(404)
   const error = new Error(`Not Found: ${req.originalUrl}`)
 

@@ -8,6 +8,8 @@ describe('GET /', () => {
       .set('Accept', 'application/json')
 
     expect(response.status).toBe(200)
-    expect(response.text).toBe('Every day you must ask yourself: Did you do enough?')
+    expect(response.text).toBe(
+      'Every day you must ask yourself: Did you do enough?',
+    )
   })
 })

@@ -1,7 +1,4 @@
-import {
-  NextFunction,
-  Response
-} from 'express'
+import {NextFunction, Response} from 'express'
 
 import {logger} from '../../../app'
 import {
@@ -10,19 +7,16 @@ import {
   findAllNotes,
   deleteNoteById,
   softDeleteNoteById,
-  editNoteById
+  editNoteById,
 } from '../services/noteService'
-import {
-  CreateNoteBody,
-  EditNoteBody
-} from '../types/note'
+import {CreateNoteBody, EditNoteBody} from '../types/note'
 import {AuthRequest} from '../../../modules/auth/types/auth'
 import {sendBadRequest} from '../../../modules/utils/response'
 
 export const getNote = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const {id} = req.params
@@ -38,9 +32,7 @@ export const getNote = async (
 
     console.log(userId)
 
-    res
-      .status(200)
-      .json(note)
+    res.status(200).json(note)
   } catch (error: unknown) {
     logger.error(`[getNote] error: ${(error as Error).message}`)
 
@@ -51,7 +43,7 @@ export const getNote = async (
 export const getAllNotes = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id
@@ -64,9 +56,7 @@ export const getAllNotes = async (
 
     const allNotes = await findAllNotes(userId)
 
-    res
-      .status(200)
-      .json(allNotes)
+    res.status(200).json(allNotes)
   } catch (error: unknown) {
     logger.error(`[getAllNotes] error: ${(error as Error).message}`)
 
@@ -77,7 +67,7 @@ export const getAllNotes = async (
 export const createNote = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const {title, text}: CreateNoteBody = req.body
@@ -92,9 +82,7 @@ export const createNote = async (
     const newNoteData = await createNewNote({title, text, userId})
     logger.info('[createNote] new note successfully created')
 
-    res
-      .status(201)
-      .json(newNoteData)
+    res.status(201).json(newNoteData)
   } catch (error: unknown) {
     logger.error(`[createNote] error: ${(error as Error).message}`)
 
@@ -105,7 +93,7 @@ export const createNote = async (
 export const editNote = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const {id, title, text}: EditNoteBody = req.body
@@ -121,9 +109,7 @@ export const editNote = async (
 
     logger.info(`[editNote] note id:${id} successfully edited`)
 
-    res
-      .status(200)
-      .json(result)
+    res.status(200).json(result)
   } catch (error: unknown) {
     logger.error(`[editNote] error: ${(error as Error).message}`)
 
@@ -134,7 +120,7 @@ export const editNote = async (
 export const softDeleteNote = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const {id} = req.params
@@ -150,9 +136,7 @@ export const softDeleteNote = async (
 
     logger.info(`[softDeleteNote] note id:${id} successfully soft deleted`)
 
-    res
-      .status(200)
-      .json(result)
+    res.status(200).json(result)
   } catch (error: unknown) {
     logger.error(`[softDeleteNote] error: ${(error as Error).message}`)
 
@@ -163,7 +147,7 @@ export const softDeleteNote = async (
 export const deleteNote = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const {id} = req.params
@@ -172,16 +156,12 @@ export const deleteNote = async (
     logger.info(`[deleteNote] note id:${id} successfully deleted`)
 
     if (result) {
-      res
-        .status(204)
-        .end()
+      res.status(204).end()
 
       return
     }
 
-    res
-      .status(404)
-      .json({error: 'Note not found'})
+    res.status(404).json({error: 'Note not found'})
   } catch (error: unknown) {
     logger.error(`[deleteNote] error: ${(error as Error).message}`)
 
