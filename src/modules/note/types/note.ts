@@ -1,15 +1,15 @@
 export type Note = {
-  id: string;
-  title: string;
-  text: string;
-  userId: string;
-  deletedAt?: Date;
+  id: string
+  title: string
+  text: string
+  userId: string
+  deletedAt?: Date
 }
 
 export type CreateNoteBody = Omit<Note, 'id'>
 
 export type NewNoteData = Omit<Note, 'id'> & {
-  userId?: string;
+  userId?: string
 }
 
 export type EditNote = Note

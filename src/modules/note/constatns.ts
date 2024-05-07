@@ -3,5 +3,5 @@ export const noteProjection = {
   title: 1,
   text: 1,
   createdAt: 1,
-  updatedAt: 1
+  updatedAt: 1,
 }

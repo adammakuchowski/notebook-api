@@ -1,4 +1,4 @@
 export interface MessageResponse {
-  message: string;
-  data?: unknown;
+  message: string
+  data?: unknown
 }

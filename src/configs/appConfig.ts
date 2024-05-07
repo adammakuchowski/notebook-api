@@ -3,24 +3,24 @@ import {config as dotenv} from 'dotenv'
 dotenv()
 
 interface DatabaseConfig {
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  name: string;
-  userLimit: number;
-  mongoUrl?: string;
+  host: string
+  port: number
+  username: string
+  password: string
+  name: string
+  userLimit: number
+  mongoUrl?: string
 }
 
 interface AuthorizationConfig {
-  secretKey: string;
-  saltRounds: number;
+  secretKey: string
+  saltRounds: number
 }
 
 interface AppConfig {
-  port: number;
-  database: DatabaseConfig;
-  authorization: AuthorizationConfig;
+  port: number
+  database: DatabaseConfig
+  authorization: AuthorizationConfig
 }
 
 const appConfig: AppConfig = {
@@ -32,12 +32,12 @@ const appConfig: AppConfig = {
     password: process.env.DB_PASSWORD ?? 'password',
     name: process.env.DB_NAME ?? 'my_database',
     mongoUrl: process.env.MONGO_URL,
-    userLimit: Number(process.env.DB_USER_LIMIT ?? 5)
+    userLimit: Number(process.env.DB_USER_LIMIT ?? 5),
   },
   authorization: {
     secretKey: process.env.SECRET_KEY ?? 'secret',
-    saltRounds: Number(process.env.SALT_ROUNDS ?? 10)
-  }
+    saltRounds: Number(process.env.SALT_ROUNDS ?? 10),
+  },
 }
 
 export default appConfig

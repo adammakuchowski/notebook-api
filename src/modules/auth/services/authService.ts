@@ -6,7 +6,10 @@ import appConfig from '../../../configs/appConfig'
 import {logger} from '../../../app'
 import {User} from '../types/auth'
 
-export const getUserByField = async (field: string, value: unknown): Promise<User | null> => {
+export const getUserByField = async (
+  field: string,
+  value: unknown,
+): Promise<User | null> => {
   try {
     const user = await UserModel.findOne({[field]: value})
 
@@ -14,11 +17,16 @@ export const getUserByField = async (field: string, value: unknown): Promise<Use
   } catch (error) {
     logger.error(`[getUserByEmail]: ${(error as Error).message}`)
 
-    throw new Error('An error occurred while checking the existence of the user')
+    throw new Error(
+      'An error occurred while checking the existence of the user',
+    )
   }
 }
 
-export const createUser = async (email: string, hash: string): Promise<void> => {
+export const createUser = async (
+  email: string,
+  hash: string,
+): Promise<void> => {
   try {
     const newUser = new UserModel({email, password: hash})
     await newUser.save()
@@ -33,7 +41,9 @@ export const createUser = async (email: string, hash: string): Promise<void> => 
 
 export const hashPassword = async (password: string): Promise<string> => {
   try {
-    const {authorization: {saltRounds}} = appConfig
+    const {
+      authorization: {saltRounds},
+    } = appConfig
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
     return hashedPassword
@@ -44,7 +54,10 @@ export const hashPassword = async (password: string): Promise<string> => {
   }
 }
 
-export const comparePassword = async (password: string, userPassword: string): Promise<boolean> => {
+export const comparePassword = async (
+  password: string,
+  userPassword: string,
+): Promise<boolean> => {
   try {
     const compareResulat = await bcrypt.compare(password, userPassword)
 
@@ -58,7 +71,9 @@ export const comparePassword = async (password: string, userPassword: string): P
 
 export const createWebToken = async (id: string): Promise<string> => {
   try {
-    const {authorization: {secretKey}} = appConfig
+    const {
+      authorization: {secretKey},
+    } = appConfig
 
     return jwt.sign({id}, secretKey, {expiresIn: '1h'})
   } catch (error) {
@@ -70,7 +85,9 @@ export const createWebToken = async (id: string): Promise<string> => {
 
 export const createRefreshToken = async (id: string): Promise<string> => {
   try {
-    const {authorization: {secretKey}} = appConfig
+    const {
+      authorization: {secretKey},
+    } = appConfig
 
     return jwt.sign({id}, secretKey, {expiresIn: '7d'})
   } catch (error) {
@@ -80,12 +97,19 @@ export const createRefreshToken = async (id: string): Promise<string> => {
   }
 }
 
-export const saveRefreshToken = async (userId: string, refreshToken: string): Promise<void> => {
+export const saveRefreshToken = async (
+  userId: string,
+  refreshToken: string,
+): Promise<void> => {
   try {
-    const {authorization: {saltRounds}} = appConfig
+    const {
+      authorization: {saltRounds},
+    } = appConfig
     const hashedRefreshToken = await bcrypt.hash(refreshToken, saltRounds)
 
-    await UserModel.findByIdAndUpdate(userId, {refreshToken: hashedRefreshToken})
+    await UserModel.findByIdAndUpdate(userId, {
+      refreshToken: hashedRefreshToken,
+    })
 
     logger.info('Hashed refresh token saved successfully')
   } catch (error) {
@@ -95,9 +119,13 @@ export const saveRefreshToken = async (userId: string, refreshToken: string): Pr
   }
 }
 
-export const verifyRefreshToken = async (refreshToken: string): Promise<JwtPayload> => {
+export const verifyRefreshToken = async (
+  refreshToken: string,
+): Promise<JwtPayload> => {
   try {
-    const {authorization: {secretKey}} = appConfig
+    const {
+      authorization: {secretKey},
+    } = appConfig
     const data = jwt.verify(refreshToken, secretKey) as JwtPayload
 
     return data
@@ -108,7 +136,10 @@ export const verifyRefreshToken = async (refreshToken: string): Promise<JwtPaylo
   }
 }
 
-export const compareRefreshToken = async (refreshToken: string, userRefreshToken: string): Promise<boolean> => {
+export const compareRefreshToken = async (
+  refreshToken: string,
+  userRefreshToken: string,
+): Promise<boolean> => {
   try {
     const compareResulat = await bcrypt.compare(refreshToken, userRefreshToken)
 

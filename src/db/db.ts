@@ -3,7 +3,9 @@ import mongoose, {ConnectOptions} from 'mongoose'
 import appConfig from '../configs/appConfig'
 import {logger} from '../app'
 
-const {database: {host, port, name, mongoUrl}} = appConfig
+const {
+  database: {host, port, name, mongoUrl},
+} = appConfig
 const DB_URL = mongoUrl ?? `mongodb://${host}:${port}/${name}`
 
 export const connectDB = async (): Promise<void> => {
