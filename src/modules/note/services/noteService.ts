@@ -1,7 +1,7 @@
 import {Document} from 'mongoose'
 
 import {NoteModel} from '../../../db/models/noteModel'
-import {EditNote, NewNoteData, Note} from '../types/note'
+import {EditNote, NewNoteData, Note} from '../types'
 import {noteProjection} from '../constatns'
 
 export const getNoteById = async (
