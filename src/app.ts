@@ -13,6 +13,7 @@ import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
 import {authRouter} from './modules/auth'
 import {noteRouter} from './modules/note'
+import {taskRouter} from './modules/task'
 
 const {port} = appConfig
 export const logger = winston.createLogger(loggerConfig)
@@ -31,6 +32,7 @@ app.get('/', (req: Request, res: Response): void => {
 
 app.use('/auth', authRouter)
 app.use('/note', noteRouter)
+app.use('/task', taskRouter)
 
 app.use(notFound)
 app.use(errorHandler)

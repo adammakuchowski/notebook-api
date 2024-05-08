@@ -9,7 +9,7 @@ import {
   softDeleteNoteById,
   editNoteById,
 } from '../services/noteService'
-import {CreateNoteBody, EditNoteBody} from '../types/note'
+import {CreateNoteBody, EditNoteBody} from '../types'
 import {AuthRequest} from '../../../modules/auth/types/auth'
 import {sendBadRequest} from '../../../modules/utils/response'
 
