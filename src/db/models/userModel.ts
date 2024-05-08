@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
-import {User} from '../../modules/auth/types/auth'
+import {User} from '../../modules/auth/types'
+import {kanbanTasksSchema} from './kanbanTasksModel'
 
 const userSchema = new mongoose.Schema<User>(
   {
@@ -18,6 +19,9 @@ const userSchema = new mongoose.Schema<User>(
       type: String,
       unique: true,
     },
+    kanbanTasks: {
+      type: kanbanTasksSchema,
+    }
   },
   {
     timestamps: true,

@@ -4,7 +4,8 @@ import jwt, {JwtPayload} from 'jsonwebtoken'
 import {UserModel} from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'
 import {logger} from '../../../app'
-import {User} from '../types/auth'
+import {User} from '../types'
+import {KanbanTasks} from '../../task/types'
 
 export const getUserByField = async (
   field: string,
@@ -26,12 +27,13 @@ export const getUserByField = async (
 export const createUser = async (
   email: string,
   hash: string,
-): Promise<void> => {
+): Promise<User> => {
   try {
     const newUser = new UserModel({email, password: hash})
     await newUser.save()
 
     logger.info(`[createUser]: user with email ${email} created`)
+    return newUser
   } catch (error) {
     logger.error(`[createUser]: ${(error as Error).message}`)
 
@@ -148,5 +150,59 @@ export const compareRefreshToken = async (
     logger.error(`[compareRefreshToken]: ${(error as Error).message}`)
 
     throw new Error('An error occurred while compare the user password')
+  }
+}
+
+export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
+  try {
+    const kanbanTasks: KanbanTasks = {
+      tasks: {},
+      columns: {
+        column1: {
+          id: 'column1',
+          title: 'toDo',
+          taskIds: [],
+        },
+        column2: {
+          id: 'column2',
+          title: 'blocked',
+          taskIds: [],
+        },
+        column3: {
+          id: 'column3',
+          title: 'inProgess',
+          taskIds: [],
+        },
+        column4: {
+          id: 'column4',
+          title: 'done',
+          taskIds: [],
+        },
+      },
+      columnOrder: ['column1', 'column2', 'column3', 'column4'],
+    }
+
+    await UserModel.findByIdAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $set: {
+          kanbanTasks,
+        },
+      },
+      {
+        new: true,
+        lean: true,
+      },
+    )
+
+    logger.info(
+      `[createEmptyKanbanTasks]: empty kanban tasks for user ${userId} created`,
+    )
+  } catch (error) {
+    logger.error(`[createEmptyKanbanTasks]: ${(error as Error).message}`)
+
+    throw new Error('An error occurred during create empty kanban tasks')
   }
 }
