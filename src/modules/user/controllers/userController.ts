@@ -12,7 +12,7 @@ import {
   hashPassword,
   saveRefreshToken,
   verifyRefreshToken,
-} from '../services/authService'
+} from '../services/userService'
 import {canCreateDocument} from '../../../db/mongoUtils'
 import {UserModel} from '../../../db/models/userModel'
 import appConfig from '../../../configs/appConfig'

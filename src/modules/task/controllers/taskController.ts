@@ -1,7 +1,7 @@
 import {NextFunction, Response} from 'express'
 
 import {logger} from '../../../app'
-import {AuthRequest} from '../../auth/types'
+import {AuthRequest} from '../../user/types'
 import {sendBadRequest} from '../../utils/response'
 import {createNewTask, getTaskById} from '../services/taskService'
 import {CreateTaskBody} from '../types'

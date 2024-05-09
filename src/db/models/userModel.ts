@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import {User} from '../../modules/auth/types'
+import {User} from '../../modules/user/types'
 import {kanbanTasksSchema} from './kanbanTasksModel'
 
 const userSchema = new mongoose.Schema<User>(
