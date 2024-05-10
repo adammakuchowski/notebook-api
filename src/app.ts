@@ -11,7 +11,7 @@ import loggerConfig from './configs/winstonConfig'
 import errorHandler from './middlewares/errorHandler'
 import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
-import {authRouter} from './modules/auth'
+import {userRouter} from './modules/user'
 import {noteRouter} from './modules/note'
 import {taskRouter} from './modules/task'
 
@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response): void => {
   res.send('Every day you must ask yourself: Did you do enough?')
 })
 
-app.use('/auth', authRouter)
+app.use('/user', userRouter)
 app.use('/note', noteRouter)
 app.use('/task', taskRouter)
 

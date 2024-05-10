@@ -10,7 +10,7 @@ import {
   editNoteById,
 } from '../services/noteService'
 import {CreateNoteBody, EditNoteBody} from '../types'
-import {AuthRequest} from '../../../modules/auth/types'
+import {AuthRequest} from '../../../modules/user/types'
 import {sendBadRequest} from '../../../modules/utils/response'
 
 export const getNote = async (

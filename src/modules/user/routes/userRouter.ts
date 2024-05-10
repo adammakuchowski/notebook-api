@@ -6,7 +6,7 @@ import {
   refreshUserToken,
   registerUser,
   verifyUser,
-} from '../controllers/authController'
+} from '../controllers/userController'
 import {validationRequest} from '../../../middlewares/validationRequest'
 import {
   refreshTokenSchema,
@@ -14,23 +14,23 @@ import {
 } from '../../../validators/userValidation'
 import {authenticateToken} from '../../../middlewares/auth'
 
-export const authRouter = express.Router()
+export const userRouter = express.Router()
 
-authRouter.post(
+userRouter.post(
   '/register',
   validationRequest(userBodySchema),
   withAsyncHandler(registerUser),
 )
 
-authRouter.post(
+userRouter.post(
   '/login',
   validationRequest(userBodySchema),
   withAsyncHandler(loginUser),
 )
 
-authRouter.get('/verify', authenticateToken, verifyUser)
+userRouter.get('/verify', authenticateToken, verifyUser)
 
-authRouter.post(
+userRouter.post(
   '/refreshToken',
   validationRequest(refreshTokenSchema),
   authenticateToken,
