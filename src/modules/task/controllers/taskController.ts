@@ -3,7 +3,11 @@ import {NextFunction, Response} from 'express'
 import {logger} from '../../../app'
 import {AuthRequest} from '../../user/types'
 import {sendBadRequest} from '../../utils/response'
-import {createNewTask, getTaskById} from '../services/taskService'
+import {
+  addTaskToUserKanban,
+  createNewTask,
+  getTaskById,
+} from '../services/taskService'
 import {CreateTaskBody} from '../types'
 
 export const getTask = async (
@@ -57,7 +61,17 @@ export const createTask = async (
     })
     logger.info('[createTask] new task successfully created')
 
-    res.status(201).json(newTaskData)
+    const userWithUpdatedKanbanTasks = await addTaskToUserKanban(
+      newTaskData.id as string,
+      title,
+      userId,
+    )
+    logger.info('[createTask] user kanban tasks successfully updated')
+
+    res.status(201).json({
+      newTaskData,
+      newKanbanTask: userWithUpdatedKanbanTasks.kanbanTasks,
+    })
   } catch (error: unknown) {
     logger.error(`[createTask] error: ${(error as Error).message}`)
 

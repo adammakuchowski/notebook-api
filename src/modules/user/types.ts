@@ -6,7 +6,7 @@ export interface User {
   email: string
   password: string
   refreshToken: string
-  kanbanTasks?: KanbanTasks;
+  kanbanTasks: KanbanTasks
 }
 
 export type RegisterUserPros = User
