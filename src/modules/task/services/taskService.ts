@@ -1,10 +1,11 @@
 import {Document} from 'mongoose'
 
 import {taskProjection} from '../constatns'
-import {NewTaskData, Task} from '../types'
+import {KanbanTasks, NewTaskData, Task} from '../types'
 import {TaskModel} from '../../../db/models/taskModel'
 import {UserModel} from '../../../db/models/userModel'
 import {User} from '../../user/types'
+import {userKanbanTasksProjection} from '../../user/constatns'
 
 export const getTaskById = async (
   _id: string,
@@ -41,6 +42,26 @@ export const createNewTask = async ({
   return newTask
 }
 
+export const getKanbanTasksByUserId = async (
+  userId: string,
+): Promise<KanbanTasks> => {
+  const user = await UserModel.findOne(
+    {
+      _id: userId,
+      deletedAt: {$eq: null},
+    },
+    userKanbanTasksProjection,
+  ).lean()
+
+  if (!user) {
+    throw new Error(`User with ID ${userId} is missing`)
+  }
+
+  const {kanbanTasks} = user
+
+  return kanbanTasks
+}
+
 export const addTaskToUserKanban = async (
   taskId: string,
   title: string,
@@ -52,7 +73,7 @@ export const addTaskToUserKanban = async (
   }).lean()
 
   if (!user) {
-    throw new Error(`Missing user by ID: ${userId}`)
+    throw new Error(`User with ID ${userId} is missing`)
   }
 
   const {kanbanTasks} = user

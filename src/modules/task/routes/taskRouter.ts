@@ -7,7 +7,7 @@ import {
   taskBodySchema,
   taskParamsSchema,
 } from '../../../validators/taskValidation'
-import {createTask, getTask} from '../controllers/taskController'
+import {createTask, getKanbanTasks, getTask} from '../controllers/taskController'
 
 export const taskRouter = express.Router()
 
@@ -23,4 +23,10 @@ taskRouter.post(
   authenticateToken,
   validationRequest(taskBodySchema),
   withAsyncHandler(createTask),
+)
+
+taskRouter.get(
+  '/getKanbanTasks',
+  authenticateToken,
+  withAsyncHandler(getKanbanTasks),
 )
