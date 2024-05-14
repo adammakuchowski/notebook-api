@@ -54,7 +54,7 @@ export const registerUser = async (
 
     const hash = await hashPassword(password)
     const newUser = await createUser(email, hash)
-    
+
     await createEmptyKanbanTasks(newUser._id)
 
     res.status(201).json({message: 'The user has been successfully registered'})

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema<User>(
     },
     kanbanTasks: {
       type: kanbanTasksSchema,
-    }
+    },
   },
   {
     timestamps: true,
