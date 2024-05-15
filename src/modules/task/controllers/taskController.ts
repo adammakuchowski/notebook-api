@@ -6,6 +6,7 @@ import {sendBadRequest} from '../../utils/response'
 import {
   addTaskToUserKanban,
   createNewTask,
+  getKanbanTasksByUserId,
   getTaskById,
 } from '../services/taskService'
 import {CreateTaskBody} from '../types'
@@ -26,8 +27,6 @@ export const getTask = async (
     }
 
     const task = await getTaskById(id, userId)
-
-    console.log(userId)
 
     res.status(200).json(task)
   } catch (error: unknown) {
@@ -74,6 +73,30 @@ export const createTask = async (
     })
   } catch (error: unknown) {
     logger.error(`[createTask] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const getKanbanTasks = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const kanbanTasks = await getKanbanTasksByUserId(userId)
+
+    res.status(200).json(kanbanTasks)
+  } catch (error: unknown) {
+    logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
     next(error)
   }

@@ -1,5 +1,5 @@
 export const taskProjection = {
-  _id: 0,
+  _id: 1,
   title: 1,
   content: 1,
   priority: 1,
