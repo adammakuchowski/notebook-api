@@ -29,3 +29,5 @@ export type KanbanTasks = {
   columns: Record<string, KanbanColumn>
   columnOrder: string[]
 }
+
+export type UpdateKanbanTasksBody = KanbanTasks

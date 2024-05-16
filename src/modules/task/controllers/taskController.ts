@@ -8,8 +8,9 @@ import {
   createNewTask,
   getKanbanTasksByUserId,
   getTaskById,
+  updateKanbanTasksByUserId,
 } from '../services/taskService'
-import {CreateTaskBody} from '../types'
+import {CreateTaskBody, UpdateKanbanTasksBody} from '../types'
 
 export const getTask = async (
   req: AuthRequest,
@@ -95,6 +96,33 @@ export const getKanbanTasks = async (
     const kanbanTasks = await getKanbanTasksByUserId(userId)
 
     res.status(200).json(kanbanTasks)
+  } catch (error: unknown) {
+    logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const updateKanbanTasks = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id
+    const kanbanTasks: UpdateKanbanTasksBody = req.body
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    await updateKanbanTasksByUserId(userId, kanbanTasks)
+
+    res.status(200).json({
+      message: 'User kanban tasks has been successfully updated'
+    })
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
