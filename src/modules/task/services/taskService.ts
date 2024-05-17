@@ -62,6 +62,29 @@ export const getKanbanTasksByUserId = async (
   return kanbanTasks
 }
 
+export const updateKanbanTasksByUserId = async (userId: string, newKanbanTasks: KanbanTasks): Promise<User> => {
+  const userWithUpdatedKanbanTasks = await UserModel.findByIdAndUpdate(
+    {
+      _id: userId,
+    },
+    {
+      $set: {
+        kanbanTasks: newKanbanTasks,
+      },
+    },
+    {
+      new: true,
+      lean: true,
+    },
+  )
+
+  if (!userWithUpdatedKanbanTasks) {
+    throw new Error(`Missing user by ID: ${userId}`)
+  }
+
+  return userWithUpdatedKanbanTasks
+}
+
 export const addTaskToUserKanban = async (
   taskId: string,
   title: string,
@@ -96,24 +119,7 @@ export const addTaskToUserKanban = async (
     },
   }
 
-  const userWithUpdatedKanbanTasks = await UserModel.findByIdAndUpdate(
-    {
-      _id: userId,
-    },
-    {
-      $set: {
-        kanbanTasks: newKanbanTasks,
-      },
-    },
-    {
-      new: true,
-      lean: true,
-    },
-  )
-
-  if (!userWithUpdatedKanbanTasks) {
-    throw new Error(`Missing user by ID: ${userId}`)
-  }
+  const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(userId, newKanbanTasks)
 
   return userWithUpdatedKanbanTasks
 }

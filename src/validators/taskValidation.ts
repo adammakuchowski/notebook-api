@@ -24,3 +24,20 @@ export const taskBodySchema = z.object({
     .date({invalid_type_error: 'Task eventDate must be a date'})
     .optional(),
 })
+
+export const kanbanTasksSchema = z.object({
+  tasks: z.record(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+    }),
+  ),
+  columns: z.record(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      taskIds: z.array(z.string()),
+    }),
+  ),
+  columnOrder: z.array(z.string()),
+})

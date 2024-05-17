@@ -4,10 +4,16 @@ import withAsyncHandler from 'express-async-handler'
 import {authenticateToken} from '../../../middlewares/auth'
 import {validationRequest} from '../../../middlewares/validationRequest'
 import {
+  kanbanTasksSchema,
   taskBodySchema,
   taskParamsSchema,
 } from '../../../validators/taskValidation'
-import {createTask, getKanbanTasks, getTask} from '../controllers/taskController'
+import {
+  createTask,
+  getKanbanTasks,
+  getTask,
+  updateKanbanTasks,
+} from '../controllers/taskController'
 
 export const taskRouter = express.Router()
 
@@ -29,4 +35,11 @@ taskRouter.get(
   '/getKanbanTasks',
   authenticateToken,
   withAsyncHandler(getKanbanTasks),
+)
+
+taskRouter.put(
+  '/updateKanbanTasks',
+  authenticateToken,
+  validationRequest(kanbanTasksSchema),
+  withAsyncHandler(updateKanbanTasks),
 )
