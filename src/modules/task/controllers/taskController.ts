@@ -118,11 +118,9 @@ export const updateKanbanTasks = async (
       return
     }
 
-    await updateKanbanTasksByUserId(userId, kanbanTasks)
+    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(userId, kanbanTasks)
 
-    res.status(200).json({
-      message: 'User kanban tasks has been successfully updated'
-    })
+    res.status(200).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
