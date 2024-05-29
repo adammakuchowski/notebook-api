@@ -162,21 +162,41 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
           id: 'column1',
           title: 'toDo',
           taskIds: [],
+          color: '#E4F1FC',
+          icons: {
+            iconLeft: 'ab2',
+            iconRight: 'dots'
+          }
         },
         column2: {
           id: 'column2',
           title: 'blocked',
           taskIds: [],
+          color: '#00ff00',
+          icons: {
+            iconLeft: 'iconPlayerPause',
+            iconRight: 'dots'
+          }
         },
         column3: {
           id: 'column3',
           title: 'inProgess',
           taskIds: [],
+          color: '#FF3333',
+          icons: {
+            iconLeft: 'iconRun',
+            iconRight: 'dots'
+          }
         },
         column4: {
           id: 'column4',
           title: 'done',
           taskIds: [],
+          color: '#808080',
+          icons: {
+            iconLeft: 'iconFileCheck',
+            iconRight: 'dots'
+          }
         },
       },
       columnOrder: ['column1', 'column2', 'column3', 'column4'],

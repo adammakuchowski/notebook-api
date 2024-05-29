@@ -15,6 +15,11 @@ const columnSchema = new mongoose.Schema<KanbanColumn>(
     id: {type: String, required: true},
     title: {type: String, required: true},
     taskIds: [{type: String}],
+    color: {type: String, required: true},
+    icons: {
+      iconLeft: {type: String, required: true},
+      iconRight: {type: String, required: true},
+    },
   },
   {_id: false},
 )

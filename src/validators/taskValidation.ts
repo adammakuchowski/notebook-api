@@ -37,6 +37,11 @@ export const kanbanTasksSchema = z.object({
       id: z.string(),
       title: z.string(),
       taskIds: z.array(z.string()),
+      color: z.string(),
+      icons: z.object({
+        iconLeft: z.string(),
+        iconRight: z.string(),
+      }),
     }),
   ),
   columnOrder: z.array(z.string()),
