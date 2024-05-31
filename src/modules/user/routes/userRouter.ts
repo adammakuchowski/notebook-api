@@ -33,6 +33,5 @@ userRouter.get('/verify', authenticateToken, verifyUser)
 userRouter.post(
   '/refreshToken',
   validationRequest(refreshTokenSchema),
-  authenticateToken,
   withAsyncHandler(refreshUserToken),
 )
