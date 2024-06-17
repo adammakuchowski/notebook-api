@@ -1,14 +1,6 @@
 import mongoose from 'mongoose'
 
-import {KanbanTask, KanbanColumn, KanbanTasks} from '../../modules/task/types'
-
-const taskSchema = new mongoose.Schema<KanbanTask>(
-  {
-    id: {type: String, required: true},
-    title: {type: String, required: true},
-  },
-  {_id: false},
-)
+import {KanbanColumn, KanbanTasks} from '../../modules/task/types'
 
 const columnSchema = new mongoose.Schema<KanbanColumn>(
   {
@@ -27,8 +19,7 @@ const columnSchema = new mongoose.Schema<KanbanColumn>(
 export const kanbanTasksSchema = new mongoose.Schema<KanbanTasks>(
   {
     tasks: {
-      type: Map,
-      of: taskSchema,
+      type: [String],
       required: true,
     },
     columns: {

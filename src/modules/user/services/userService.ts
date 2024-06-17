@@ -165,8 +165,8 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
           color: '#E4F1FC',
           icons: {
             iconLeft: 'ab2',
-            iconRight: 'dots'
-          }
+            iconRight: 'dots',
+          },
         },
         column2: {
           id: 'column2',
@@ -175,8 +175,8 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
           color: '#00ff00',
           icons: {
             iconLeft: 'iconPlayerPause',
-            iconRight: 'dots'
-          }
+            iconRight: 'dots',
+          },
         },
         column3: {
           id: 'column3',
@@ -185,8 +185,8 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
           color: '#FF3333',
           icons: {
             iconLeft: 'iconRun',
-            iconRight: 'dots'
-          }
+            iconRight: 'dots',
+          },
         },
         column4: {
           id: 'column4',
@@ -195,8 +195,8 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
           color: '#808080',
           icons: {
             iconLeft: 'iconFileCheck',
-            iconRight: 'dots'
-          }
+            iconRight: 'dots',
+          },
         },
       },
       columnOrder: ['column1', 'column2', 'column3', 'column4'],

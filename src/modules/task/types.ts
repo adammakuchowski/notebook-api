@@ -27,10 +27,10 @@ export type KanbanColumn = {
   }
 }
 
-export type KanbanTask = Pick<Task, 'id' | 'title'>
+export type KanbanTask = Pick<Task, 'id' | 'title' | 'priority'>
 
 export type KanbanTasks = {
-  tasks: Record<string, KanbanTask>
+  tasks: Record<string, KanbanTask> | string[]
   columns: Record<string, KanbanColumn>
   columnOrder: string[]
 }

@@ -62,7 +62,49 @@ export const getKanbanTasksByUserId = async (
   return kanbanTasks
 }
 
-export const updateKanbanTasksByUserId = async (userId: string, newKanbanTasks: KanbanTasks): Promise<User> => {
+export const prepareKanbanTasksForBeautifulDnd = async (
+  kanbanTasks: KanbanTasks,
+): Promise<KanbanTasks> => {
+  const {tasks: taskIds} = kanbanTasks
+
+  const tasks = await TaskModel.find({
+    _id: {$in: taskIds},
+    deletedAt: {$eq: null},
+  }).lean()
+
+  const mappedKanbanTasks: KanbanTasks = {
+    ...kanbanTasks,
+    tasks: tasks.reduce(
+      (newKanbanTasks, task) => ({
+        ...newKanbanTasks,
+        [task._id.toString()]: {
+          id: task._id.toString(),
+          title: task.title,
+          priority: task.priority,
+        },
+      }),
+      {},
+    ),
+  }
+
+  return mappedKanbanTasks
+}
+
+export const mapKanbanTasksBeautifulDndToMongo = (kanbanTasks: KanbanTasks): KanbanTasks => {
+  const {tasks} = kanbanTasks
+
+  const newKanbanTasks = {
+    ...kanbanTasks,
+    tasks: Object.keys(tasks),
+  }
+
+  return newKanbanTasks
+}
+
+export const updateKanbanTasksByUserId = async (
+  userId: string,
+  newKanbanTasks: KanbanTasks,
+): Promise<User> => {
   const userWithUpdatedKanbanTasks = await UserModel.findByIdAndUpdate(
     {
       _id: userId,
@@ -87,7 +129,6 @@ export const updateKanbanTasksByUserId = async (userId: string, newKanbanTasks: 
 
 export const addTaskToUserKanban = async (
   taskId: string,
-  title: string,
   userId: string,
 ): Promise<User> => {
   const user = await UserModel.findOne({
@@ -103,13 +144,7 @@ export const addTaskToUserKanban = async (
 
   const newKanbanTasks = {
     ...kanbanTasks,
-    tasks: {
-      ...kanbanTasks.tasks,
-      [taskId]: {
-        id: taskId,
-        title,
-      },
-    },
+    tasks: [...(kanbanTasks.tasks as string[]), taskId],
     columns: {
       ...kanbanTasks.columns,
       column1: {
@@ -119,7 +154,10 @@ export const addTaskToUserKanban = async (
     },
   }
 
-  const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(userId, newKanbanTasks)
+  const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
+    userId,
+    newKanbanTasks,
+  )
 
   return userWithUpdatedKanbanTasks
 }
