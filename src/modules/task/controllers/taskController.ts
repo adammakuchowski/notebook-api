@@ -8,6 +8,8 @@ import {
   createNewTask,
   getKanbanTasksByUserId,
   getTaskById,
+  mapKanbanTasksBeautifulDndToMongo,
+  prepareKanbanTasksForBeautifulDnd,
   updateKanbanTasksByUserId,
 } from '../services/taskService'
 import {CreateTaskBody, UpdateKanbanTasksBody} from '../types'
@@ -63,7 +65,6 @@ export const createTask = async (
 
     const userWithUpdatedKanbanTasks = await addTaskToUserKanban(
       newTaskData.id as string,
-      title,
       userId,
     )
     logger.info('[createTask] user kanban tasks successfully updated')
@@ -94,8 +95,9 @@ export const getKanbanTasks = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
+    const preparedKanbanTasks = await prepareKanbanTasksForBeautifulDnd(kanbanTasks)
 
-    res.status(200).json(kanbanTasks)
+    res.status(200).json(preparedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
@@ -118,7 +120,11 @@ export const updateKanbanTasks = async (
       return
     }
 
-    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(userId, kanbanTasks)
+    const mappedKanbanTasks = mapKanbanTasksBeautifulDndToMongo(kanbanTasks)
+    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
+      userId,
+      mappedKanbanTasks,
+    )
 
     res.status(200).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
