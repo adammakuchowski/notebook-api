@@ -9,7 +9,7 @@ import {
   getKanbanTasksByUserId,
   getTaskById,
   mapKanbanTasksBeautifulDndToMongo,
-  prepareKanbanTasksForBeautifulDnd,
+  mapKanbanTasksMongoToBeautifulDnd,
   updateKanbanTasksByUserId,
 } from '../services/taskService'
 import {CreateTaskBody, UpdateKanbanTasksBody} from '../types'
@@ -95,9 +95,9 @@ export const getKanbanTasks = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    const preparedKanbanTasks = await prepareKanbanTasksForBeautifulDnd(kanbanTasks)
+    const mappedKanbanTasks = await mapKanbanTasksMongoToBeautifulDnd(kanbanTasks)
 
-    res.status(200).json(preparedKanbanTasks)
+    res.status(200).json(mappedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
