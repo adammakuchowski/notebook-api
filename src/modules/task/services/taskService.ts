@@ -62,7 +62,7 @@ export const getKanbanTasksByUserId = async (
   return kanbanTasks
 }
 
-export const prepareKanbanTasksForBeautifulDnd = async (
+export const mapKanbanTasksMongoToBeautifulDnd = async (
   kanbanTasks: KanbanTasks,
 ): Promise<KanbanTasks> => {
   const {tasks: taskIds} = kanbanTasks
