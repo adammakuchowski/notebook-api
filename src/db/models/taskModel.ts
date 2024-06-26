@@ -8,7 +8,7 @@ const taskSchema = new mongoose.Schema<Task>(
       type: String,
       required: true,
     },
-    content: {
+    description: {
       type: String,
     },
     priority: {
