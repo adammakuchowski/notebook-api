@@ -12,9 +12,9 @@ export const taskBodySchema = z.object({
     required_error: 'Task title is required',
     invalid_type_error: 'Task title must be a string',
   }),
-  content: z.string({
-    required_error: 'Task content is required',
-    invalid_type_error: 'Task content must be a string',
+  description: z.string({
+    required_error: 'Task description is required',
+    invalid_type_error: 'Task description must be a string',
   }),
   priority: z.string({
     required_error: 'Task priority is required',

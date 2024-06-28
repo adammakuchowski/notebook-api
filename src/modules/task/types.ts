@@ -1,7 +1,7 @@
 export type Task = {
   id: string
   title: string
-  content: string
+  description: string
   priority: string
   userId: string
   eventDate?: Date

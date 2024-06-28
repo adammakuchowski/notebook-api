@@ -25,14 +25,14 @@ export const getTaskById = async (
 
 export const createNewTask = async ({
   title,
-  content,
+  description,
   priority,
   userId,
   eventDate,
 }: NewTaskData): Promise<Document> => {
   const newTaskModel = new TaskModel({
     title,
-    content,
+    description,
     priority,
     userId,
     eventDate,

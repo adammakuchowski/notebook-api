@@ -45,7 +45,7 @@ export const createTask = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {title, content, priority, eventDate}: CreateTaskBody = req.body
+    const {title, description, priority, eventDate}: CreateTaskBody = req.body
     const userId = req.user?.id
 
     if (!userId) {
@@ -56,7 +56,7 @@ export const createTask = async (
 
     const newTaskData = await createNewTask({
       title,
-      content,
+      description,
       priority,
       userId,
       eventDate,
