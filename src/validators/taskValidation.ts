@@ -8,21 +8,26 @@ export const taskParamsSchema = z.object({
 })
 
 export const taskBodySchema = z.object({
-  title: z.string({
-    required_error: 'Task title is required',
-    invalid_type_error: 'Task title must be a string',
+  task: z.object({
+    title: z.string({
+      required_error: 'Task title is required',
+      invalid_type_error: 'Task title must be a string',
+    }),
+    description: z.string({
+      required_error: 'Task description is required',
+      invalid_type_error: 'Task description must be a string',
+    }),
+    priority: z.string({
+      required_error: 'Task priority is required',
+      invalid_type_error: 'Task priority must be a string',
+    }),
+    eventDate: z.coerce
+      .date({invalid_type_error: 'Task eventDate must be a date'})
+      .optional(),
   }),
-  description: z.string({
-    required_error: 'Task description is required',
-    invalid_type_error: 'Task description must be a string',
+  columnId: z.string({
+    invalid_type_error: 'Task columnId must be a string',
   }),
-  priority: z.string({
-    required_error: 'Task priority is required',
-    invalid_type_error: 'Task priority must be a string',
-  }),
-  eventDate: z.coerce
-    .date({invalid_type_error: 'Task eventDate must be a date'})
-    .optional(),
 })
 
 export const kanbanTasksSchema = z.object({

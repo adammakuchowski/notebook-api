@@ -45,7 +45,11 @@ export const createTask = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {title, description, priority, eventDate}: CreateTaskBody = req.body
+    const {
+      columnId,
+      task: {title, description, priority, eventDate},
+    }: CreateTaskBody = req.body
+
     const userId = req.user?.id
 
     if (!userId) {
@@ -66,6 +70,7 @@ export const createTask = async (
     const userWithUpdatedKanbanTasks = await addTaskToUserKanban(
       newTaskData.id as string,
       userId,
+      columnId,
     )
     logger.info('[createTask] user kanban tasks successfully updated')
 
@@ -95,7 +100,8 @@ export const getKanbanTasks = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    const mappedKanbanTasks = await mapKanbanTasksMongoToBeautifulDnd(kanbanTasks)
+    const mappedKanbanTasks =
+      await mapKanbanTasksMongoToBeautifulDnd(kanbanTasks)
 
     res.status(200).json(mappedKanbanTasks)
   } catch (error: unknown) {

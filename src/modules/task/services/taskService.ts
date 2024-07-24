@@ -130,6 +130,7 @@ export const updateKanbanTasksByUserId = async (
 export const addTaskToUserKanban = async (
   taskId: string,
   userId: string,
+  columnId: string
 ): Promise<User> => {
   const user = await UserModel.findOne({
     _id: userId,
@@ -147,9 +148,9 @@ export const addTaskToUserKanban = async (
     tasks: [...(kanbanTasks.tasks as string[]), taskId],
     columns: {
       ...kanbanTasks.columns,
-      column1: {
-        ...kanbanTasks.columns.column1,
-        taskIds: [...kanbanTasks.columns.column1.taskIds, taskId],
+      [columnId]: {
+        ...kanbanTasks.columns[columnId],
+        taskIds: [...kanbanTasks.columns[columnId].taskIds, taskId],
       },
     },
   }
