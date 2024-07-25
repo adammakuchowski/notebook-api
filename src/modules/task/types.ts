@@ -23,11 +23,6 @@ export type KanbanColumn = {
   id: string
   title: string
   taskIds: string[]
-  color: string
-  icons: {
-    iconLeft: string
-    iconRight: string
-  }
 }
 
 export type KanbanTask = Pick<Task, 'id' | 'title' | 'priority'>
