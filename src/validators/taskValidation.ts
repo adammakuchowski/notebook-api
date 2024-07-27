@@ -1,13 +1,13 @@
 import {z} from 'zod'
 
-export const taskParamsSchema = z.object({
+export const getTaskSchema = z.object({
   id: z.string({
     required_error: 'Task id is required',
     invalid_type_error: 'Task id must be a string',
   }),
 })
 
-export const taskBodySchema = z.object({
+export const createTaskSchema = z.object({
   task: z.object({
     title: z.string({
       required_error: 'Task title is required',
@@ -30,7 +30,7 @@ export const taskBodySchema = z.object({
   }),
 })
 
-export const kanbanTasksSchema = z.object({
+export const updateKanbanTasksSchema = z.object({
   tasks: z.record(
     z.object({
       id: z.string(),
@@ -45,4 +45,11 @@ export const kanbanTasksSchema = z.object({
     }),
   ),
   columnOrder: z.array(z.string()),
+})
+
+export const deleteColumnKanbanTasksSchema = z.object({
+  columnId: z.string({
+    required_error: 'Property columnId is required',
+    invalid_type_error: 'Property columnId must be a string',
+  }),
 })

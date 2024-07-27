@@ -4,12 +4,14 @@ import withAsyncHandler from 'express-async-handler'
 import {authenticateToken} from '../../../middlewares/auth'
 import {validationRequest} from '../../../middlewares/validationRequest'
 import {
-  kanbanTasksSchema,
-  taskBodySchema,
-  taskParamsSchema,
+  deleteColumnKanbanTasksSchema,
+  updateKanbanTasksSchema,
+  createTaskSchema,
+  getTaskSchema,
 } from '../../../validators/taskValidation'
 import {
   createTask,
+  deleteColumnKanbanTasks,
   getKanbanTasks,
   getTask,
   updateKanbanTasks,
@@ -20,14 +22,14 @@ export const taskRouter = express.Router()
 taskRouter.get(
   '/getTask/:id',
   authenticateToken,
-  validationRequest(taskParamsSchema, 'params'),
+  validationRequest(getTaskSchema, 'params'),
   withAsyncHandler(getTask),
 )
 
 taskRouter.post(
   '/createTask',
   authenticateToken,
-  validationRequest(taskBodySchema),
+  validationRequest(createTaskSchema),
   withAsyncHandler(createTask),
 )
 
@@ -40,6 +42,13 @@ taskRouter.get(
 taskRouter.put(
   '/updateKanbanTasks',
   authenticateToken,
-  validationRequest(kanbanTasksSchema),
+  validationRequest(updateKanbanTasksSchema),
   withAsyncHandler(updateKanbanTasks),
+)
+
+taskRouter.put(
+  '/deleteColumnKanbanTasks',
+  authenticateToken,
+  validationRequest(deleteColumnKanbanTasksSchema),
+  withAsyncHandler(deleteColumnKanbanTasks),
 )

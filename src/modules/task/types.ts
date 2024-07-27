@@ -34,3 +34,7 @@ export type KanbanTasks = {
 }
 
 export type UpdateKanbanTasksBody = KanbanTasks
+
+export type DeleteColumnKanbanTasksBody = {
+  columnId: string
+}
