@@ -2,17 +2,23 @@ import {NextFunction, Response} from 'express'
 
 import {logger} from '../../../app'
 import {AuthRequest} from '../../user/types'
-import {sendBadRequest} from '../../utils/response'
+import {sendBadRequest} from '../../utils/responseUtils'
 import {
   addTaskToUserKanban,
   createNewTask,
+  deletedTasksFromRemovedColumn,
   getKanbanTasksByUserId,
   getTaskById,
   mapKanbanTasksBeautifulDndToMongo,
   mapKanbanTasksMongoToBeautifulDnd,
+  removeColumnKanbanTasks,
   updateKanbanTasksByUserId,
 } from '../services/taskService'
-import {CreateTaskBody, UpdateKanbanTasksBody} from '../types'
+import {
+  CreateTaskBody,
+  DeleteColumnKanbanTasksBody,
+  UpdateKanbanTasksBody,
+} from '../types'
 
 export const getTask = async (
   req: AuthRequest,
@@ -135,6 +141,38 @@ export const updateKanbanTasks = async (
     res.status(200).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const deleteColumnKanbanTasks = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id
+    const {columnId}: DeleteColumnKanbanTasksBody = req.body
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const kanbanTasks = await getKanbanTasksByUserId(userId)
+    const updatedKanbanTasks = await removeColumnKanbanTasks(kanbanTasks, columnId)
+    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
+      userId,
+      updatedKanbanTasks,
+    )
+
+    await deletedTasksFromRemovedColumn(kanbanTasks, columnId)
+
+    res.status(200).json(userWithUpdatedKanbanTasks)
+  } catch (error: unknown) {
+    logger.error(`[deleteColumnKanbanTasks] error: ${(error as Error).message}`)
 
     next(error)
   }

@@ -1,11 +1,12 @@
 import {Document} from 'mongoose'
 
 import {taskProjection} from '../constatns'
-import {KanbanTasks, NewTaskData, Task} from '../types'
+import {KanbanColumn, KanbanTasks, NewTaskData, Task} from '../types'
 import {TaskModel} from '../../../db/models/taskModel'
 import {UserModel} from '../../../db/models/userModel'
 import {User} from '../../user/types'
 import {userKanbanTasksProjection} from '../../user/constatns'
+import {removeObjectPropertyByKey} from '../../utils/objectUtils'
 
 export const getTaskById = async (
   _id: string,
@@ -90,7 +91,9 @@ export const mapKanbanTasksMongoToBeautifulDnd = async (
   return mappedKanbanTasks
 }
 
-export const mapKanbanTasksBeautifulDndToMongo = (kanbanTasks: KanbanTasks): KanbanTasks => {
+export const mapKanbanTasksBeautifulDndToMongo = (
+  kanbanTasks: KanbanTasks,
+): KanbanTasks => {
   const {tasks} = kanbanTasks
 
   const newKanbanTasks = {
@@ -130,7 +133,7 @@ export const updateKanbanTasksByUserId = async (
 export const addTaskToUserKanban = async (
   taskId: string,
   userId: string,
-  columnId: string
+  columnId: string,
 ): Promise<User> => {
   const user = await UserModel.findOne({
     _id: userId,
@@ -161,4 +164,46 @@ export const addTaskToUserKanban = async (
   )
 
   return userWithUpdatedKanbanTasks
+}
+
+const filterRemovedTasks = (tasks: string[], tasksToRemove: string[]): string [] => tasks.filter((task: string) => !tasksToRemove.includes(task))
+
+export const removeColumnKanbanTasks = async (
+  kanbanTasks: KanbanTasks,
+  columnId: string,
+): Promise<KanbanTasks> => {
+  const {columns, columnOrder, tasks} = kanbanTasks
+
+  const tasksToRemove = columns[columnId].taskIds
+  const newTasks = filterRemovedTasks(tasks as string[], tasksToRemove)
+
+  const newColumns = removeObjectPropertyByKey(columns, columnId) 
+
+  const newColumnOrder = columnOrder.filter((column) => column !== columnId)
+
+  const newKanbanTasks = {
+    ...kanbanTasks,
+    tasks: [...newTasks],
+    columns: {...newColumns as Record<string, KanbanColumn>},
+    columnOrder: [...newColumnOrder]
+  }
+
+  return newKanbanTasks
+}
+
+export const deletedTasksFromRemovedColumn = async (
+  kanbanTasks: KanbanTasks,
+  columnId: string,
+): Promise<void> => {
+  const {columns} = kanbanTasks
+  const taskIdsToRemove = columns[columnId].taskIds
+
+  await TaskModel.updateMany(
+    {
+      _id: {$in: taskIdsToRemove}
+    },
+    {
+      deletedAt: new Date()
+    }
+  )
 }
