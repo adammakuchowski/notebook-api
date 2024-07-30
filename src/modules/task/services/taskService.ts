@@ -177,7 +177,7 @@ export const removeColumnKanbanTasks = async (
   const tasksToRemove = columns[columnId].taskIds
   const newTasks = filterRemovedTasks(tasks as string[], tasksToRemove)
 
-  const newColumns = removeObjectPropertyByKey(columns, columnId) 
+  const newColumns = removeObjectPropertyByKey({...columns}, columnId) 
 
   const newColumnOrder = columnOrder.filter((column) => column !== columnId)
 
