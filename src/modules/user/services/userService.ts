@@ -158,28 +158,28 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
     const kanbanTasks: KanbanTasks = {
       tasks: {},
       columns: {
-        column1: {
-          id: 'column1',
+        1: {
+          id: '1',
           title: 'toDo',
           taskIds: [],
         },
-        column2: {
-          id: 'column2',
+        2: {
+          id: '2',
           title: 'blocked',
           taskIds: [],
         },
-        column3: {
-          id: 'column3',
+        3: {
+          id: '3',
           title: 'inProgess',
           taskIds: [],
         },
-        column4: {
-          id: 'column4',
+        4: {
+          id: '4',
           title: 'done',
           taskIds: [],
         },
       },
-      columnOrder: ['column1', 'column2', 'column3', 'column4'],
+      columnOrder: ['1', '2', '3', '4'],
     }
 
     await UserModel.findByIdAndUpdate(

@@ -53,3 +53,10 @@ export const deleteColumnSchema = z.object({
     invalid_type_error: 'Property columnId must be a string',
   }),
 })
+
+export const createColumnSchema = z.object({
+  title: z.string({
+    required_error: 'Property title is required',
+    invalid_type_error: 'Property title must be a string',
+  }),
+})

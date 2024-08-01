@@ -166,9 +166,12 @@ export const addTaskToUserKanban = async (
   return userWithUpdatedKanbanTasks
 }
 
-const filterRemovedTasks = (tasks: string[], tasksToRemove: string[]): string [] => tasks.filter((task: string) => !tasksToRemove.includes(task))
+const filterRemovedTasks = (
+  tasks: string[],
+  tasksToRemove: string[],
+): string[] => tasks.filter((task: string) => !tasksToRemove.includes(task))
 
-export const removeColumnKanbanTasks = async (
+export const removeColumnFromKanbanTasks = async (
   kanbanTasks: KanbanTasks,
   columnId: string,
 ): Promise<KanbanTasks> => {
@@ -177,15 +180,15 @@ export const removeColumnKanbanTasks = async (
   const tasksToRemove = columns[columnId].taskIds
   const newTasks = filterRemovedTasks(tasks as string[], tasksToRemove)
 
-  const newColumns = removeObjectPropertyByKey({...columns}, columnId) 
+  const newColumns = removeObjectPropertyByKey({...columns}, columnId)
 
   const newColumnOrder = columnOrder.filter((column) => column !== columnId)
 
   const newKanbanTasks = {
     ...kanbanTasks,
     tasks: [...newTasks],
-    columns: {...newColumns as Record<string, KanbanColumn>},
-    columnOrder: [...newColumnOrder]
+    columns: {...(newColumns as Record<string, KanbanColumn>)},
+    columnOrder: [...newColumnOrder],
   }
 
   return newKanbanTasks
@@ -200,10 +203,47 @@ export const deletedTasksFromRemovedColumn = async (
 
   await TaskModel.updateMany(
     {
-      _id: {$in: taskIdsToRemove}
+      _id: {$in: taskIdsToRemove},
     },
     {
-      deletedAt: new Date()
-    }
+      deletedAt: new Date(),
+    },
   )
+}
+
+export const getNewColumnId = (kanbanTasks: KanbanTasks): string => {
+  const {columnOrder} = kanbanTasks
+
+  let newColumnId = '0'
+
+  for (let i = 0; i <= columnOrder.length; i++) {
+    if (columnOrder.includes((i + 1).toString())) {
+      continue
+    }
+
+    newColumnId = (i + 1).toString()
+  }
+
+  return newColumnId
+}
+
+export const addNewColumnToKanbanTasks = (kanbanTasks: KanbanTasks, newColumnId: string, title: string): KanbanTasks => {
+  const {columns, columnOrder} = kanbanTasks
+
+  const newColumns = {
+    ...columns,
+    [newColumnId]: {
+      id: newColumnId,
+      title,
+      taskIds: []
+    }
+  }
+
+  const newKanbanTasks = {
+    ...kanbanTasks,
+    columns: {...(newColumns as Record<string, KanbanColumn>)},
+    columnOrder: [...columnOrder, newColumnId],
+  }
+
+  return newKanbanTasks
 }

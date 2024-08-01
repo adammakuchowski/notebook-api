@@ -4,17 +4,20 @@ import {logger} from '../../../app'
 import {AuthRequest} from '../../user/types'
 import {sendBadRequest} from '../../utils/responseUtils'
 import {
+  addNewColumnToKanbanTasks,
   addTaskToUserKanban,
   createNewTask,
   deletedTasksFromRemovedColumn,
   getKanbanTasksByUserId,
+  getNewColumnId,
   getTaskById,
   mapKanbanTasksBeautifulDndToMongo,
   mapKanbanTasksMongoToBeautifulDnd,
-  removeColumnKanbanTasks,
+  removeColumnFromKanbanTasks,
   updateKanbanTasksByUserId,
 } from '../services/taskService'
 import {
+  CreateColumnBody,
   CreateTaskBody,
   DeleteColumnBody,
   UpdateKanbanTasksBody,
@@ -162,7 +165,7 @@ export const deleteColumn = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    const updatedKanbanTasks = await removeColumnKanbanTasks(kanbanTasks, columnId)
+    const updatedKanbanTasks = await removeColumnFromKanbanTasks(kanbanTasks, columnId)
     const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
       userId,
       updatedKanbanTasks,
@@ -173,6 +176,38 @@ export const deleteColumn = async (
     res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[deleteColumn] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const createColumn = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id
+    const {title}: CreateColumnBody = req.body
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const kanbanTasks = await getKanbanTasksByUserId(userId)
+    const newColumnId = getNewColumnId(kanbanTasks)
+    const updatedKanbanTasks = addNewColumnToKanbanTasks(kanbanTasks, newColumnId, title)
+
+    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
+      userId,
+      updatedKanbanTasks,
+    )
+
+    res.status(201).json(userWithUpdatedKanbanTasks)
+  } catch (error: unknown) {
+    logger.error(`[createColumn] error: ${(error as Error).message}`)
 
     next(error)
   }
