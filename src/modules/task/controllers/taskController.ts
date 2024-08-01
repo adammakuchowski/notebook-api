@@ -138,7 +138,7 @@ export const updateKanbanTasks = async (
       mappedKanbanTasks,
     )
 
-    res.status(200).json(userWithUpdatedKanbanTasks)
+    res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[getKanbanTasks] error: ${(error as Error).message}`)
 
@@ -170,7 +170,7 @@ export const deleteColumnKanbanTasks = async (
 
     await deletedTasksFromRemovedColumn(kanbanTasks, columnId)
 
-    res.status(200).json(userWithUpdatedKanbanTasks)
+    res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[deleteColumnKanbanTasks] error: ${(error as Error).message}`)
 
