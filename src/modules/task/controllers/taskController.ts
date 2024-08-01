@@ -16,7 +16,7 @@ import {
 } from '../services/taskService'
 import {
   CreateTaskBody,
-  DeleteColumnKanbanTasksBody,
+  DeleteColumnBody,
   UpdateKanbanTasksBody,
 } from '../types'
 
@@ -146,14 +146,14 @@ export const updateKanbanTasks = async (
   }
 }
 
-export const deleteColumnKanbanTasks = async (
+export const deleteColumn = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id
-    const {columnId}: DeleteColumnKanbanTasksBody = req.body
+    const {columnId}: DeleteColumnBody = req.body
 
     if (!userId) {
       sendBadRequest(res, 'Missing user ID')
@@ -172,7 +172,7 @@ export const deleteColumnKanbanTasks = async (
 
     res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
-    logger.error(`[deleteColumnKanbanTasks] error: ${(error as Error).message}`)
+    logger.error(`[deleteColumn] error: ${(error as Error).message}`)
 
     next(error)
   }

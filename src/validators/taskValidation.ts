@@ -47,7 +47,7 @@ export const updateKanbanTasksSchema = z.object({
   columnOrder: z.array(z.string()),
 })
 
-export const deleteColumnKanbanTasksSchema = z.object({
+export const deleteColumnSchema = z.object({
   columnId: z.string({
     required_error: 'Property columnId is required',
     invalid_type_error: 'Property columnId must be a string',
