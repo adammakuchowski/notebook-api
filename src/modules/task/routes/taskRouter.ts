@@ -9,11 +9,13 @@ import {
   createTaskSchema,
   getTaskSchema,
   createColumnSchema,
+  editColumnSchema,
 } from '../../../validators/taskValidation'
 import {
   createColumn,
   createTask,
   deleteColumn,
+  editColumn,
   getKanbanTasks,
   getTask,
   updateKanbanTasks,
@@ -60,4 +62,11 @@ taskRouter.put(
   authenticateToken,
   validationRequest(createColumnSchema),
   withAsyncHandler(createColumn),
+)
+
+taskRouter.put(
+  '/editColumn',
+  authenticateToken,
+  validationRequest(editColumnSchema),
+  withAsyncHandler(editColumn),
 )

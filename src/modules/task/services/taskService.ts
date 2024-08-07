@@ -1,5 +1,4 @@
 import {Document} from 'mongoose'
-
 import {taskProjection} from '../constatns'
 import {KanbanColumn, KanbanTasks, NewTaskData, Task} from '../types'
 import {TaskModel} from '../../../db/models/taskModel'
@@ -243,6 +242,26 @@ export const addNewColumnToKanbanTasks = (kanbanTasks: KanbanTasks, newColumnId:
     ...kanbanTasks,
     columns: {...(newColumns as Record<string, KanbanColumn>)},
     columnOrder: [...columnOrder, newColumnId],
+  }
+
+  return newKanbanTasks
+}
+
+export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, columnId: string, newTitle: string): KanbanTasks => {
+  const {columns} = kanbanTasks
+  const updatedColumn = columns[columnId]
+
+  const newColumns = {
+    ...columns,
+    [columnId]: {
+      ...updatedColumn,
+      title: newTitle
+    }
+  }
+
+  const newKanbanTasks = {
+    ...kanbanTasks,
+    columns: {...(newColumns as Record<string, KanbanColumn>)},
   }
 
   return newKanbanTasks
