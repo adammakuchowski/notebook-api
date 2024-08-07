@@ -160,22 +160,22 @@ export const createEmptyKanbanTasks = async (userId: string): Promise<void> => {
       columns: {
         1: {
           id: '1',
-          title: 'toDo',
+          title: 'To do',
           taskIds: [],
         },
         2: {
           id: '2',
-          title: 'blocked',
+          title: 'Blocked',
           taskIds: [],
         },
         3: {
           id: '3',
-          title: 'inProgess',
+          title: 'In progess',
           taskIds: [],
         },
         4: {
           id: '4',
-          title: 'done',
+          title: 'Done',
           taskIds: [],
         },
       },
