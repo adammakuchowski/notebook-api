@@ -42,3 +42,8 @@ export type DeleteColumnBody = {
 export type CreateColumnBody = {
   title: string
 }
+
+export type EditColumnBody = {
+  columnId: string
+  title: string
+}

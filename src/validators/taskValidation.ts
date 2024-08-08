@@ -60,3 +60,14 @@ export const createColumnSchema = z.object({
     invalid_type_error: 'Property title must be a string',
   }),
 })
+
+export const editColumnSchema = z.object({
+  columnId: z.string({
+    required_error: 'Property columnId is required',
+    invalid_type_error: 'Property columnId must be a string',
+  }),
+  title: z.string({
+    required_error: 'Property title is required',
+    invalid_type_error: 'Property title must be a string',
+  }),
+})

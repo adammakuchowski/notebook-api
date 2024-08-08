@@ -9,6 +9,7 @@ import {
   createNewTask,
   deletedTasksFromRemovedColumn,
   getKanbanTasksByUserId,
+  getKanbanTasksWithUpdatedColumnName,
   getNewColumnId,
   getTaskById,
   mapKanbanTasksBeautifulDndToMongo,
@@ -20,6 +21,7 @@ import {
   CreateColumnBody,
   CreateTaskBody,
   DeleteColumnBody,
+  EditColumnBody,
   UpdateKanbanTasksBody,
 } from '../types'
 
@@ -208,6 +210,37 @@ export const createColumn = async (
     res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {
     logger.error(`[createColumn] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const editColumn = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id
+    const {columnId, title}: EditColumnBody = req.body
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const kanbanTasks = await getKanbanTasksByUserId(userId)
+    const updatedKanbanTasks = getKanbanTasksWithUpdatedColumnName(kanbanTasks, columnId, title)
+    
+    const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
+      userId,
+      updatedKanbanTasks,
+    )
+
+    res.status(201).json(userWithUpdatedKanbanTasks)
+  } catch (error: unknown) {
+    logger.error(`[editColumn] error: ${(error as Error).message}`)
 
     next(error)
   }
