@@ -5,4 +5,5 @@ export const taskProjection = {
   priority: 1,
   createdAt: 1,
   updatedAt: 1,
+  eventDate: 1,
 }

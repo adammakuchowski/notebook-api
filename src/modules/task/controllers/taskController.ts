@@ -167,7 +167,10 @@ export const deleteColumn = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    const updatedKanbanTasks = await removeColumnFromKanbanTasks(kanbanTasks, columnId)
+    const updatedKanbanTasks = await removeColumnFromKanbanTasks(
+      kanbanTasks,
+      columnId,
+    )
     const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
       userId,
       updatedKanbanTasks,
@@ -200,7 +203,11 @@ export const createColumn = async (
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
     const newColumnId = getNewColumnId(kanbanTasks)
-    const updatedKanbanTasks = addNewColumnToKanbanTasks(kanbanTasks, newColumnId, title)
+    const updatedKanbanTasks = addNewColumnToKanbanTasks(
+      kanbanTasks,
+      newColumnId,
+      title,
+    )
 
     const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
       userId,
@@ -231,8 +238,12 @@ export const editColumn = async (
     }
 
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    const updatedKanbanTasks = getKanbanTasksWithUpdatedColumnName(kanbanTasks, columnId, title)
-    
+    const updatedKanbanTasks = getKanbanTasksWithUpdatedColumnName(
+      kanbanTasks,
+      columnId,
+      title,
+    )
+
     const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
       userId,
       updatedKanbanTasks,

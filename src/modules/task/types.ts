@@ -11,11 +11,14 @@ export type Task = {
 }
 
 export type CreateTaskBody = {
-  task: Omit<Task, 'id'>,
+  task: Omit<Task, 'id'>
   columnId: string
 }
 
-export type NewTaskData = Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'columnId'> & {
+export type NewTaskData = Omit<
+  Task,
+  'id' | 'createdAt' | 'updatedAt' | 'columnId'
+> & {
   userId?: string
 }
 
