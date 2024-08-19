@@ -10,10 +10,6 @@ export type Task = {
   deletedAt?: Date
 }
 
-export type GetTaskBody = {
-  id: string
-}
-
 export type CreateTaskBody = {
   task: Omit<Task, 'id'>
   columnId: string

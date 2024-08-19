@@ -22,7 +22,6 @@ import {
   CreateTaskBody,
   DeleteColumnBody,
   EditColumnBody,
-  GetTaskBody,
   UpdateKanbanTasksBody,
 } from '../types'
 
@@ -32,7 +31,7 @@ export const getTask = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {id}: GetTaskBody = req.body
+    const {id} = req.params
     const userId = req.user?.id
 
     if (!userId) {
