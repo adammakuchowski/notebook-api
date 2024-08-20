@@ -266,3 +266,35 @@ export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, co
 
   return newKanbanTasks
 }
+
+export const  updateTaskById = async (task: Task): Promise<Task> => {
+  const {
+    id: taskId,
+    title,
+    description,
+    priority,
+    eventDate
+  } = task
+
+  const updatedTask = await TaskModel.findByIdAndUpdate(
+    {
+      _id: taskId,
+    },
+    {
+      title,
+      description,
+      priority,
+      eventDate
+    },
+    {
+      new: true,
+      lean: true,
+    },
+  )
+
+  if (!updatedTask) {
+    throw new Error(`Missing task by ID: ${taskId}`)
+  }
+
+  return updatedTask
+}

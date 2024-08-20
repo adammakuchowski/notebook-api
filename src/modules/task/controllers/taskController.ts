@@ -16,6 +16,7 @@ import {
   mapKanbanTasksMongoToBeautifulDnd,
   removeColumnFromKanbanTasks,
   updateKanbanTasksByUserId,
+  updateTaskById,
 } from '../services/taskService'
 import {
   CreateColumnBody,
@@ -23,6 +24,7 @@ import {
   DeleteColumnBody,
   EditColumnBody,
   UpdateKanbanTasksBody,
+  UpdateTaskBody,
 } from '../types'
 
 export const getTask = async (
@@ -91,6 +93,31 @@ export const createTask = async (
     })
   } catch (error: unknown) {
     logger.error(`[createTask] error: ${(error as Error).message}`)
+
+    next(error)
+  }
+}
+
+export const updateTask = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const {task}: UpdateTaskBody = req.body
+    const userId = req.user?.id
+
+    if (!userId) {
+      sendBadRequest(res, 'Missing user ID')
+
+      return
+    }
+
+    const updatedTask = await updateTaskById(task)
+
+    res.status(200).json(updatedTask)
+  } catch (error: unknown) {
+    logger.error(`[updateTask] error: ${(error as Error).message}`)
 
     next(error)
   }

@@ -30,6 +30,15 @@ export const createTaskSchema = z.object({
   }),
 })
 
+export const updateTaskSchema = z.object({
+  task: z.object({
+    id: z.string({
+      required_error: 'Task id is required',
+      invalid_type_error: 'Task id must be a string',
+    }),
+  }),
+})
+
 export const updateKanbanTasksSchema = z.object({
   tasks: z.record(
     z.object({
