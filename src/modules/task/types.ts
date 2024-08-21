@@ -15,6 +15,10 @@ export type CreateTaskBody = {
   columnId: string
 }
 
+export type UpdateTaskBody = {
+  task: Task
+}
+
 export type NewTaskData = Omit<
   Task,
   'id' | 'createdAt' | 'updatedAt' | 'columnId'

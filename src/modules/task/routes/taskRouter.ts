@@ -10,6 +10,7 @@ import {
   getTaskSchema,
   createColumnSchema,
   editColumnSchema,
+  updateTaskSchema,
 } from '../../../validators/taskValidation'
 import {
   createColumn,
@@ -19,6 +20,7 @@ import {
   getKanbanTasks,
   getTask,
   updateKanbanTasks,
+  updateTask,
 } from '../controllers/taskController'
 
 export const taskRouter = express.Router()
@@ -35,6 +37,13 @@ taskRouter.post(
   authenticateToken,
   validationRequest(createTaskSchema),
   withAsyncHandler(createTask),
+)
+
+taskRouter.post(
+  '/updateTask',
+  authenticateToken,
+  validationRequest(updateTaskSchema),
+  withAsyncHandler(updateTask),
 )
 
 taskRouter.get(
