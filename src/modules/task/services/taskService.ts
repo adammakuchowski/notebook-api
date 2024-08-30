@@ -78,7 +78,7 @@ export const mapKanbanTasksMongoToBeautifulDnd = async (
       (newKanbanTasks, task) => ({
         ...newKanbanTasks,
         [task._id.toString()]: {
-          id: task._id.toString(),
+          _id: task._id.toString(),
           title: task.title,
           priority: task.priority,
         },
@@ -269,7 +269,7 @@ export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, co
 
 export const  updateTaskById = async (task: Task): Promise<Task> => {
   const {
-    id: taskId,
+    _id: taskId,
     title,
     description,
     priority,
