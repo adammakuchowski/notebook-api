@@ -1,5 +1,5 @@
 export type Task = {
-  id: string
+  _id: string
   title: string
   description: string
   priority: string
@@ -11,7 +11,7 @@ export type Task = {
 }
 
 export type CreateTaskBody = {
-  task: Omit<Task, 'id'>
+  task: Omit<Task, '_id'>
   columnId: string
 }
 
@@ -21,7 +21,7 @@ export type UpdateTaskBody = {
 
 export type NewTaskData = Omit<
   Task,
-  'id' | 'createdAt' | 'updatedAt' | 'columnId'
+  '_id' | 'createdAt' | 'updatedAt' | 'columnId'
 > & {
   userId?: string
 }
@@ -32,7 +32,7 @@ export type KanbanColumn = {
   taskIds: string[]
 }
 
-export type KanbanTask = Pick<Task, 'id' | 'title' | 'priority'>
+export type KanbanTask = Pick<Task, '_id' | 'title' | 'priority'>
 
 export type KanbanTasks = {
   tasks: Record<string, KanbanTask> | string[]

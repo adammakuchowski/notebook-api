@@ -115,7 +115,7 @@ export const updateTask = async (
 
     const updatedTask = await updateTaskById(task)
 
-    res.status(200).json(updatedTask)
+    res.status(201).json(updatedTask)
   } catch (error: unknown) {
     logger.error(`[updateTask] error: ${(error as Error).message}`)
 
