@@ -11,11 +11,13 @@ import {
   createColumnSchema,
   editColumnSchema,
   updateTaskSchema,
+  deleteTaskSchema,
 } from '../../../validators/taskValidation'
 import {
   createColumn,
   createTask,
   deleteColumn,
+  deleteTask,
   editColumn,
   getKanbanTasks,
   getTask,
@@ -44,6 +46,13 @@ taskRouter.post(
   authenticateToken,
   validationRequest(updateTaskSchema),
   withAsyncHandler(updateTask),
+)
+
+taskRouter.post(
+  '/deleteTask',
+  authenticateToken,
+  validationRequest(deleteTaskSchema),
+  withAsyncHandler(deleteTask),
 )
 
 taskRouter.get(
