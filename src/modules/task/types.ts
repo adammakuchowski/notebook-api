@@ -19,6 +19,10 @@ export type UpdateTaskBody = {
   task: Task
 }
 
+export type DeleteTaskBody = {
+  _id: string
+}
+
 export type NewTaskData = Omit<
   Task,
   '_id' | 'createdAt' | 'updatedAt' | 'columnId'

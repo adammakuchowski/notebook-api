@@ -193,21 +193,76 @@ export const removeColumnFromKanbanTasks = async (
   return newKanbanTasks
 }
 
-export const deletedTasksFromRemovedColumn = async (
+export const deleteTaskByIds = async (
+  TaskIdsToDelete: string[],
+): Promise<void> => {
+  await TaskModel.updateMany(
+    {
+      _id: {$in: TaskIdsToDelete},
+    },
+    {
+      deletedAt: new Date(),
+    },
+  )
+}
+
+export const deleteTasksFromRemovedColumn = async (
   kanbanTasks: KanbanTasks,
   columnId: string,
 ): Promise<void> => {
   const {columns} = kanbanTasks
   const taskIdsToRemove = columns[columnId].taskIds
 
-  await TaskModel.updateMany(
-    {
-      _id: {$in: taskIdsToRemove},
-    },
-    {
-      deletedAt: new Date(),
-    },
+  await deleteTaskByIds(taskIdsToRemove)
+}
+
+const findColumnWithTask = (
+  columns: Record<string, KanbanColumn>,
+  taskId: string,
+): KanbanColumn | undefined =>
+  Object.values(columns).find((column) => column.taskIds.includes(taskId))
+
+const updateColumnsAfterTaskRemoval = (
+  columns: Record<string, KanbanColumn>,
+  columnToRemoveTask: KanbanColumn,
+  newColumnTasks: string[],
+): Record<string, KanbanColumn> => ({
+  ...columns,
+  [columnToRemoveTask.id]: {
+    ...columnToRemoveTask,
+    taskIds: newColumnTasks,
+  },
+})
+
+export const removeTaskFromKanbanTasks = async (
+  kanbanTasks: KanbanTasks,
+  taskId: string,
+): Promise<KanbanTasks> => {
+  const {columns, tasks} = kanbanTasks
+
+  const columnToRemoveTask = findColumnWithTask(columns, taskId)
+  if (!columnToRemoveTask) {
+    throw new Error(`Task with ID ${taskId} is missing from any column`)
+  }
+
+  const newColumnTasks = filterRemovedTasks(columnToRemoveTask.taskIds, [
+    taskId,
+  ])
+  const newColumns = updateColumnsAfterTaskRemoval(
+    columns,
+    columnToRemoveTask,
+    newColumnTasks,
   )
+
+  const newTasks = filterRemovedTasks(tasks as string[], [taskId])
+
+  const newKanbanTasks = {
+    ...kanbanTasks,
+    tasks: [...newTasks],
+    columns: {...newColumns},
+  }
+
+  return newKanbanTasks
 }
 
 export const getNewColumnId = (kanbanTasks: KanbanTasks): string => {
@@ -226,7 +281,11 @@ export const getNewColumnId = (kanbanTasks: KanbanTasks): string => {
   return newColumnId
 }
 
-export const addNewColumnToKanbanTasks = (kanbanTasks: KanbanTasks, newColumnId: string, title: string): KanbanTasks => {
+export const addNewColumnToKanbanTasks = (
+  kanbanTasks: KanbanTasks,
+  newColumnId: string,
+  title: string,
+): KanbanTasks => {
   const {columns, columnOrder} = kanbanTasks
 
   const newColumns = {
@@ -234,8 +293,8 @@ export const addNewColumnToKanbanTasks = (kanbanTasks: KanbanTasks, newColumnId:
     [newColumnId]: {
       id: newColumnId,
       title,
-      taskIds: []
-    }
+      taskIds: [],
+    },
   }
 
   const newKanbanTasks = {
@@ -247,7 +306,11 @@ export const addNewColumnToKanbanTasks = (kanbanTasks: KanbanTasks, newColumnId:
   return newKanbanTasks
 }
 
-export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, columnId: string, newTitle: string): KanbanTasks => {
+export const getKanbanTasksWithUpdatedColumnName = (
+  kanbanTasks: KanbanTasks,
+  columnId: string,
+  newTitle: string,
+): KanbanTasks => {
   const {columns} = kanbanTasks
   const updatedColumn = columns[columnId]
 
@@ -255,8 +318,8 @@ export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, co
     ...columns,
     [columnId]: {
       ...updatedColumn,
-      title: newTitle
-    }
+      title: newTitle,
+    },
   }
 
   const newKanbanTasks = {
@@ -267,14 +330,8 @@ export const getKanbanTasksWithUpdatedColumnName = (kanbanTasks: KanbanTasks, co
   return newKanbanTasks
 }
 
-export const  updateTaskById = async (task: Task): Promise<Task> => {
-  const {
-    _id: taskId,
-    title,
-    description,
-    priority,
-    eventDate
-  } = task
+export const updateTaskById = async (task: Task): Promise<Task> => {
+  const {_id: taskId, title, description, priority, eventDate} = task
 
   const updatedTask = await TaskModel.findByIdAndUpdate(
     {
@@ -284,7 +341,7 @@ export const  updateTaskById = async (task: Task): Promise<Task> => {
       title,
       description,
       priority,
-      eventDate
+      eventDate,
     },
     {
       new: true,
