@@ -132,7 +132,7 @@ export const deleteTask = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {_id: taskId}: DeleteTaskBody = req.body
+    const {taskId}: DeleteTaskBody = req.body
     const userId = req.user?.id
 
     if (!userId) {

@@ -40,9 +40,9 @@ export const updateTaskSchema = z.object({
 })
 
 export const deleteTaskSchema = z.object({
-  _id: z.string({
-    required_error: 'Task _id is required',
-    invalid_type_error: 'Task _id must be a string',
+  taskId: z.string({
+    required_error: 'Task taskId is required',
+    invalid_type_error: 'Task taskId must be a string',
   }),
 })
 
