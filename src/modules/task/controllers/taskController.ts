@@ -132,7 +132,7 @@ export const deleteTask = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {_id: taskId}: DeleteTaskBody = req.body
+    const {taskId}: DeleteTaskBody = req.body
     const userId = req.user?.id
 
     if (!userId) {
@@ -141,10 +141,9 @@ export const deleteTask = async (
       return
     }
 
-    await deleteTaskByIds([taskId])
-
+    // TODO: This should be in the transaction
     const kanbanTasks = await getKanbanTasksByUserId(userId)
-    
+  
     const updatedKanbanTasks = await removeTaskFromKanbanTasks(
       kanbanTasks,
       taskId,
@@ -154,6 +153,8 @@ export const deleteTask = async (
       userId,
       updatedKanbanTasks,
     )
+
+    await deleteTaskByIds([taskId])
 
     res.status(201).json(userWithUpdatedKanbanTasks)
   } catch (error: unknown) {

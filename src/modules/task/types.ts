@@ -20,7 +20,7 @@ export type UpdateTaskBody = {
 }
 
 export type DeleteTaskBody = {
-  _id: string
+  taskId: string
 }
 
 export type NewTaskData = Omit<

@@ -248,6 +248,7 @@ export const removeTaskFromKanbanTasks = async (
   const newColumnTasks = filterRemovedTasks(columnToRemoveTask.taskIds, [
     taskId,
   ])
+  
   const newColumns = updateColumnsAfterTaskRemoval(
     columns,
     columnToRemoveTask,
