@@ -1,1 +1,1 @@
-export {userRouter} from './routes/userRouter'
+export {userRouter} from './userEndpoints'
