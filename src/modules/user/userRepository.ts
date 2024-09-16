@@ -1,8 +1,8 @@
 import {UserModel} from '../../db/models/userModel'
+import {Repository} from '../types'
 import {User} from './types'
 
-// export class UserRepository implements Repository<User> {
-export class UserRepository {
+export class UserRepository implements Repository<User> {
   async findById(id: string): Promise<User | null> {
     const user = await UserModel.findOne({
       _id: id,
@@ -17,8 +17,6 @@ export class UserRepository {
 
     return user
   }
-
-  //   async findAll(): Promise<User[]> {}
 
   async create(userData: Pick<User, 'email' | 'password'>): Promise<User> {
     const {email, password} = userData
@@ -38,5 +36,16 @@ export class UserRepository {
     return result
   }
 
-  //   async delete(id: string): Promise<boolean> {}
+  async softDelete(ids: string[]): Promise<boolean> {
+    const result = await UserModel.updateMany(
+      {
+        _id: {$in: ids},
+      },
+      {
+        deletedAt: new Date(),
+      },
+    )
+
+    return result.acknowledged
+  }
 }
