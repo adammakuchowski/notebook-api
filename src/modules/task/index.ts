@@ -1,1 +1,1 @@
-export {taskRouter} from './routes/taskRouter'
+export {taskRouter} from './taskEndpoints'

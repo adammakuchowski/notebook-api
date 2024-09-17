@@ -3,11 +3,13 @@ import {Repository} from '../types'
 import {User} from './types'
 
 export class UserRepository implements Repository<User> {
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string, projection?: Record<string, unknown>): Promise<User | null> {
     const user = await UserModel.findOne({
       _id: id,
       deletedAt: {$eq: null},
-    }).lean()
+    },
+    projection,
+  ).lean()
 
     return user
   }
@@ -19,9 +21,7 @@ export class UserRepository implements Repository<User> {
   }
 
   async create(userData: Pick<User, 'email' | 'password'>): Promise<User> {
-    const {email, password} = userData
-
-    const newUser = new UserModel({email, password})
+    const newUser = new UserModel(userData)
     await newUser.save()
 
     return newUser

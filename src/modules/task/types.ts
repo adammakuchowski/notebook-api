@@ -5,8 +5,8 @@ export type Task = {
   priority: string
   userId: string
   eventDate?: Date
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
   deletedAt?: Date
 }
 
