@@ -1,358 +1,326 @@
-import {Document} from 'mongoose'
-import {taskProjection} from '../constatns'
+import {Container} from 'typedi/Container'
 import {KanbanColumn, KanbanTasks, NewTaskData, Task} from '../types'
-import {TaskModel} from '../../../db/models/taskModel'
-import {UserModel} from '../../../db/models/userModel'
 import {User} from '../../user/types'
 import {userKanbanTasksProjection} from '../../user/constatns'
 import {removeObjectPropertyByKey} from '../../utils/objectUtils'
+import {TaskRepository} from '../taskRepository'
+import {UserRepository} from '../../user/userRepository'
 
-export const getTaskById = async (
-  _id: string,
-  userId: string,
-): Promise<Task | null> => {
-  const task = await TaskModel.findOne(
-    {
-      _id,
-      userId,
-      deletedAt: {$eq: null},
-    },
-    taskProjection,
-  ).lean()
+export class TaskService {
+  private readonly taskRepository
+  private readonly userRepository
 
-  return task
-}
+  constructor() {
+    this.taskRepository = Container.get(TaskRepository)
+    this.userRepository = Container.get(UserRepository)
+  }
 
-export const createNewTask = async ({
-  title,
-  description,
-  priority,
-  userId,
-  eventDate,
-}: NewTaskData): Promise<Document> => {
-  const newTaskModel = new TaskModel({
+  async getTaskById(_id: string): Promise<Task | null> {
+    const task = await this.taskRepository.findById(_id)
+
+    return task
+  }
+
+  async createTask({
     title,
     description,
     priority,
     userId,
     eventDate,
-  })
-  const newTask = await newTaskModel.save()
+  }: NewTaskData): Promise<Task> {
+    const newTask = await this.taskRepository.create({
+      title,
+      description,
+      priority,
+      userId,
+      eventDate,
+    })
 
-  return newTask
-}
-
-export const getKanbanTasksByUserId = async (
-  userId: string,
-): Promise<KanbanTasks> => {
-  const user = await UserModel.findOne(
-    {
-      _id: userId,
-      deletedAt: {$eq: null},
-    },
-    userKanbanTasksProjection,
-  ).lean()
-
-  if (!user) {
-    throw new Error(`User with ID ${userId} is missing`)
+    return newTask
   }
 
-  const {kanbanTasks} = user
+  async getKanbanTasksByUserId(userId: string): Promise<KanbanTasks> {
+    const user = await this.userRepository.findById(
+      userId,
+      userKanbanTasksProjection,
+    )
 
-  return kanbanTasks
-}
-
-export const mapKanbanTasksMongoToBeautifulDnd = async (
-  kanbanTasks: KanbanTasks,
-): Promise<KanbanTasks> => {
-  const {tasks: taskIds} = kanbanTasks
-
-  const tasks = await TaskModel.find({
-    _id: {$in: taskIds},
-    deletedAt: {$eq: null},
-  }).lean()
-
-  const mappedKanbanTasks: KanbanTasks = {
-    ...kanbanTasks,
-    tasks: tasks.reduce(
-      (newKanbanTasks, task) => ({
-        ...newKanbanTasks,
-        [task._id.toString()]: {
-          _id: task._id.toString(),
-          title: task.title,
-          priority: task.priority,
-        },
-      }),
-      {},
-    ),
-  }
-
-  return mappedKanbanTasks
-}
-
-export const mapKanbanTasksBeautifulDndToMongo = (
-  kanbanTasks: KanbanTasks,
-): KanbanTasks => {
-  const {tasks} = kanbanTasks
-
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    tasks: Object.keys(tasks),
-  }
-
-  return newKanbanTasks
-}
-
-export const updateKanbanTasksByUserId = async (
-  userId: string,
-  newKanbanTasks: KanbanTasks,
-): Promise<User> => {
-  const userWithUpdatedKanbanTasks = await UserModel.findByIdAndUpdate(
-    {
-      _id: userId,
-    },
-    {
-      $set: {
-        kanbanTasks: newKanbanTasks,
-      },
-    },
-    {
-      new: true,
-      lean: true,
-    },
-  )
-
-  if (!userWithUpdatedKanbanTasks) {
-    throw new Error(`Missing user by ID: ${userId}`)
-  }
-
-  return userWithUpdatedKanbanTasks
-}
-
-export const addTaskToUserKanban = async (
-  taskId: string,
-  userId: string,
-  columnId: string,
-): Promise<User> => {
-  const user = await UserModel.findOne({
-    _id: userId,
-    deletedAt: {$eq: null},
-  }).lean()
-
-  if (!user) {
-    throw new Error(`User with ID ${userId} is missing`)
-  }
-
-  const {kanbanTasks} = user
-
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    tasks: [...(kanbanTasks.tasks as string[]), taskId],
-    columns: {
-      ...kanbanTasks.columns,
-      [columnId]: {
-        ...kanbanTasks.columns[columnId],
-        taskIds: [...kanbanTasks.columns[columnId].taskIds, taskId],
-      },
-    },
-  }
-
-  const userWithUpdatedKanbanTasks = await updateKanbanTasksByUserId(
-    userId,
-    newKanbanTasks,
-  )
-
-  return userWithUpdatedKanbanTasks
-}
-
-const filterRemovedTasks = (
-  tasks: string[],
-  tasksToRemove: string[],
-): string[] => tasks.filter((task: string) => !tasksToRemove.includes(task))
-
-export const removeColumnFromKanbanTasks = async (
-  kanbanTasks: KanbanTasks,
-  columnId: string,
-): Promise<KanbanTasks> => {
-  const {columns, columnOrder, tasks} = kanbanTasks
-
-  const tasksToRemove = columns[columnId].taskIds
-  const newTasks = filterRemovedTasks(tasks as string[], tasksToRemove)
-
-  const newColumns = removeObjectPropertyByKey({...columns}, columnId)
-
-  const newColumnOrder = columnOrder.filter((column) => column !== columnId)
-
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    tasks: [...newTasks],
-    columns: {...(newColumns as Record<string, KanbanColumn>)},
-    columnOrder: [...newColumnOrder],
-  }
-
-  return newKanbanTasks
-}
-
-export const deleteTaskByIds = async (
-  TaskIdsToDelete: string[],
-): Promise<void> => {
-  await TaskModel.updateMany(
-    {
-      _id: {$in: TaskIdsToDelete},
-    },
-    {
-      deletedAt: new Date(),
-    },
-  )
-}
-
-export const deleteTasksFromRemovedColumn = async (
-  kanbanTasks: KanbanTasks,
-  columnId: string,
-): Promise<void> => {
-  const {columns} = kanbanTasks
-  const taskIdsToRemove = columns[columnId].taskIds
-
-  await deleteTaskByIds(taskIdsToRemove)
-}
-
-const findColumnWithTask = (
-  columns: Record<string, KanbanColumn>,
-  taskId: string,
-): KanbanColumn | undefined =>
-  Object.values(columns).find((column) => column.taskIds.includes(taskId))
-
-const updateColumnsAfterTaskRemoval = (
-  columns: Record<string, KanbanColumn>,
-  columnToRemoveTask: KanbanColumn,
-  newColumnTasks: string[],
-): Record<string, KanbanColumn> => ({
-  ...columns,
-  [columnToRemoveTask.id]: {
-    ...columnToRemoveTask,
-    taskIds: newColumnTasks,
-  },
-})
-
-export const removeTaskFromKanbanTasks = async (
-  kanbanTasks: KanbanTasks,
-  taskId: string,
-): Promise<KanbanTasks> => {
-  const {columns, tasks} = kanbanTasks
-
-  const columnToRemoveTask = findColumnWithTask(columns, taskId)
-  if (!columnToRemoveTask) {
-    throw new Error(`Task with ID ${taskId} is missing from any column`)
-  }
-
-  const newColumnTasks = filterRemovedTasks(columnToRemoveTask.taskIds, [
-    taskId,
-  ])
-  
-  const newColumns = updateColumnsAfterTaskRemoval(
-    columns,
-    columnToRemoveTask,
-    newColumnTasks,
-  )
-
-  const newTasks = filterRemovedTasks(tasks as string[], [taskId])
-
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    tasks: [...newTasks],
-    columns: {...newColumns},
-  }
-
-  return newKanbanTasks
-}
-
-export const getNewColumnId = (kanbanTasks: KanbanTasks): string => {
-  const {columnOrder} = kanbanTasks
-
-  let newColumnId = '0'
-
-  for (let i = 0; i <= columnOrder.length; i++) {
-    if (columnOrder.includes((i + 1).toString())) {
-      continue
+    if (!user) {
+      throw new Error(`User with ID ${userId} is missing`)
     }
 
-    newColumnId = (i + 1).toString()
+    const {kanbanTasks} = user
+
+    return kanbanTasks
   }
 
-  return newColumnId
-}
+  async mapKanbanTasksMongoToBeautifulDnd(
+    kanbanTasks: KanbanTasks,
+  ): Promise<KanbanTasks> {
+    const {tasks: taskIds} = kanbanTasks
 
-export const addNewColumnToKanbanTasks = (
-  kanbanTasks: KanbanTasks,
-  newColumnId: string,
-  title: string,
-): KanbanTasks => {
-  const {columns, columnOrder} = kanbanTasks
+    const tasks = await this.taskRepository.findAllByField(
+      '_id',
+      taskIds as string[],
+    )
 
-  const newColumns = {
-    ...columns,
-    [newColumnId]: {
-      id: newColumnId,
-      title,
-      taskIds: [],
-    },
+    const mappedKanbanTasks: KanbanTasks = {
+      ...kanbanTasks,
+      tasks: tasks.reduce(
+        (newKanbanTasks, task) => ({
+          ...newKanbanTasks,
+          [task._id.toString()]: {
+            _id: task._id.toString(),
+            title: task.title,
+            priority: task.priority,
+          },
+        }),
+        {},
+      ),
+    }
+
+    return mappedKanbanTasks
   }
 
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    columns: {...(newColumns as Record<string, KanbanColumn>)},
-    columnOrder: [...columnOrder, newColumnId],
+  async removeTaskFromKanbanTasks(
+    kanbanTasks: KanbanTasks,
+    taskId: string,
+  ): Promise<KanbanTasks> {
+    const {columns, tasks} = kanbanTasks
+
+    const columnToRemoveTask = this.findColumnWithTask(columns, taskId)
+    if (!columnToRemoveTask) {
+      throw new Error(`Task with ID ${taskId} is missing from any column`)
+    }
+
+    const newColumnTasks = this.filterRemovedTasks(columnToRemoveTask.taskIds, [
+      taskId,
+    ])
+
+    const newColumns = this.updateColumnsAfterTaskRemoval(
+      columns,
+      columnToRemoveTask,
+      newColumnTasks,
+    )
+
+    const newTasks = this.filterRemovedTasks(tasks as string[], [taskId])
+
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      tasks: [...newTasks],
+      columns: {...newColumns},
+    }
+
+    return newKanbanTasks
   }
 
-  return newKanbanTasks
-}
-
-export const getKanbanTasksWithUpdatedColumnName = (
-  kanbanTasks: KanbanTasks,
-  columnId: string,
-  newTitle: string,
-): KanbanTasks => {
-  const {columns} = kanbanTasks
-  const updatedColumn = columns[columnId]
-
-  const newColumns = {
-    ...columns,
-    [columnId]: {
-      ...updatedColumn,
-      title: newTitle,
-    },
+  findColumnWithTask(
+    columns: Record<string, KanbanColumn>,
+    taskId: string,
+  ): KanbanColumn | undefined {
+    return Object.values(columns).find((column) =>
+      column.taskIds.includes(taskId),
+    )
   }
 
-  const newKanbanTasks = {
-    ...kanbanTasks,
-    columns: {...(newColumns as Record<string, KanbanColumn>)},
+  filterRemovedTasks(tasks: string[], tasksToRemove: string[]): string[] {
+    return tasks.filter((task: string) => !tasksToRemove.includes(task))
   }
 
-  return newKanbanTasks
-}
+  updateColumnsAfterTaskRemoval(
+    columns: Record<string, KanbanColumn>,
+    columnToRemoveTask: KanbanColumn,
+    newColumnTasks: string[],
+  ): Record<string, KanbanColumn> {
+    return {
+      ...columns,
+      [columnToRemoveTask.id]: {
+        ...columnToRemoveTask,
+        taskIds: newColumnTasks,
+      },
+    }
+  }
 
-export const updateTaskById = async (task: Task): Promise<Task> => {
-  const {_id: taskId, title, description, priority, eventDate} = task
+  mapKanbanTasksBeautifulDndToMongo = (
+    kanbanTasks: KanbanTasks,
+  ): KanbanTasks => {
+    const {tasks} = kanbanTasks
 
-  const updatedTask = await TaskModel.findByIdAndUpdate(
-    {
-      _id: taskId,
-    },
-    {
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      tasks: Object.keys(tasks),
+    }
+
+    return newKanbanTasks
+  }
+
+  async updateKanbanTasksByUserId(
+    userId: string,
+    newKanbanTasks: KanbanTasks,
+  ): Promise<User> {
+    const userWithUpdatedKanbanTasks = await this.userRepository.update(
+      userId,
+      {
+        kanbanTasks: newKanbanTasks,
+      },
+    )
+
+    if (!userWithUpdatedKanbanTasks) {
+      throw new Error(`Missing user by ID: ${userId}`)
+    }
+
+    return userWithUpdatedKanbanTasks
+  }
+
+  async addTaskToUserKanban(
+    taskId: string,
+    userId: string,
+    columnId: string,
+  ): Promise<User> {
+    const user = await this.userRepository.findById(userId)
+
+    if (!user) {
+      throw new Error(`User with ID ${userId} is missing`)
+    }
+
+    const {kanbanTasks} = user
+
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      tasks: [...(kanbanTasks.tasks as string[]), taskId],
+      columns: {
+        ...kanbanTasks.columns,
+        [columnId]: {
+          ...kanbanTasks.columns[columnId],
+          taskIds: [...kanbanTasks.columns[columnId].taskIds, taskId],
+        },
+      },
+    }
+
+    const userWithUpdatedKanbanTasks = await this.updateKanbanTasksByUserId(
+      userId,
+      newKanbanTasks,
+    )
+
+    return userWithUpdatedKanbanTasks
+  }
+
+  async removeColumnFromKanbanTasks(
+    kanbanTasks: KanbanTasks,
+    columnId: string,
+  ): Promise<KanbanTasks> {
+    const {columns, columnOrder, tasks} = kanbanTasks
+
+    const tasksToRemove = columns[columnId].taskIds
+    const newTasks = this.filterRemovedTasks(tasks as string[], tasksToRemove)
+
+    const newColumns = removeObjectPropertyByKey({...columns}, columnId)
+
+    const newColumnOrder = columnOrder.filter((column) => column !== columnId)
+
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      tasks: [...newTasks],
+      columns: {...(newColumns as Record<string, KanbanColumn>)},
+      columnOrder: [...newColumnOrder],
+    }
+
+    return newKanbanTasks
+  }
+
+  async deleteTaskByIds(taskIdsToDelete: string[]): Promise<void> {
+    await this.taskRepository.softDelete(taskIdsToDelete)
+  }
+
+  async deleteTasksFromRemovedColumn(
+    kanbanTasks: KanbanTasks,
+    columnId: string,
+  ): Promise<void> {
+    const {columns} = kanbanTasks
+    const taskIdsToRemove = columns[columnId].taskIds
+
+    await this.deleteTaskByIds(taskIdsToRemove)
+  }
+
+  getNewColumnId(kanbanTasks: KanbanTasks): string {
+    const {columnOrder} = kanbanTasks
+
+    let newColumnId = '0'
+
+    for (let i = 0; i <= columnOrder.length; i++) {
+      if (columnOrder.includes((i + 1).toString())) {
+        continue
+      }
+
+      newColumnId = (i + 1).toString()
+    }
+
+    return newColumnId
+  }
+
+  addNewColumnToKanbanTasks(
+    kanbanTasks: KanbanTasks,
+    newColumnId: string,
+    title: string,
+  ): KanbanTasks {
+    const {columns, columnOrder} = kanbanTasks
+
+    const newColumns = {
+      ...columns,
+      [newColumnId]: {
+        id: newColumnId,
+        title,
+        taskIds: [],
+      },
+    }
+
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      columns: {...(newColumns as Record<string, KanbanColumn>)},
+      columnOrder: [...columnOrder, newColumnId],
+    }
+
+    return newKanbanTasks
+  }
+
+  getKanbanTasksWithUpdatedColumnName(
+    kanbanTasks: KanbanTasks,
+    columnId: string,
+    newTitle: string,
+  ): KanbanTasks {
+    const {columns} = kanbanTasks
+    const updatedColumn = columns[columnId]
+
+    const newColumns = {
+      ...columns,
+      [columnId]: {
+        ...updatedColumn,
+        title: newTitle,
+      },
+    }
+
+    const newKanbanTasks = {
+      ...kanbanTasks,
+      columns: {...(newColumns as Record<string, KanbanColumn>)},
+    }
+
+    return newKanbanTasks
+  }
+
+  async updateTaskById(task: Task): Promise<Task> {
+    const {_id: taskId, title, description, priority, eventDate} = task
+
+    const updatedTask = await this.taskRepository.update(taskId, {
       title,
       description,
       priority,
       eventDate,
-    },
-    {
-      new: true,
-      lean: true,
-    },
-  )
+    },)
 
-  if (!updatedTask) {
-    throw new Error(`Missing task by ID: ${taskId}`)
+    if (!updatedTask) {
+      throw new Error(`Missing task by ID: ${taskId}`)
+    }
+
+    return updatedTask
   }
-
-  return updatedTask
 }
