@@ -14,12 +14,15 @@ import {
   UpdateTaskBody,
 } from './types'
 import {Container} from 'typedi/Container'
+import {KanbanService} from './services/kanbanService'
 
 export class TaskController {
   private readonly taskService
-
+  private readonly kanbanService
+  
   constructor() {
     this.taskService = Container.get(TaskService)
+    this.kanbanService = Container.get(KanbanService)
   }
 
   async getTask(
@@ -77,7 +80,7 @@ export class TaskController {
 
       // TO CHECK _id
       const userWithUpdatedKanbanTasks =
-        await this.taskService.addTaskToUserKanban(
+        await this.kanbanService.addTaskToUserKanban(
           newTask._id,
           userId,
           columnId,
@@ -136,13 +139,13 @@ export class TaskController {
       }
 
       // TODO: This should be in the transaction
-      const kanbanTasks = await this.taskService.getKanbanTasksByUserId(userId)
+      const kanbanTasks = await this.kanbanService.getKanbanTasksByUserId(userId)
 
       const updatedKanbanTasks =
-        await this.taskService.removeTaskFromKanbanTasks(kanbanTasks, taskId)
+        await this.kanbanService.removeTaskFromKanbanTasks(kanbanTasks, taskId)
 
       const userWithUpdatedKanbanTasks =
-        await this.taskService.updateKanbanTasksByUserId(
+        await this.kanbanService.updateKanbanTasksByUserId(
           userId,
           updatedKanbanTasks,
         )
@@ -171,9 +174,9 @@ export class TaskController {
         return
       }
 
-      const kanbanTasks = await this.taskService.getKanbanTasksByUserId(userId)
+      const kanbanTasks = await this.kanbanService.getKanbanTasksByUserId(userId)
       const mappedKanbanTasks =
-        await this.taskService.mapKanbanTasksMongoToBeautifulDnd(kanbanTasks)
+        await this.kanbanService.mapKanbanTasksMongoToBeautifulDnd(kanbanTasks)
 
       res.status(200).json(mappedKanbanTasks)
     } catch (error: unknown) {
@@ -199,9 +202,9 @@ export class TaskController {
       }
 
       const mappedKanbanTasks =
-        this.taskService.mapKanbanTasksBeautifulDndToMongo(kanbanTasks)
+        this.kanbanService.mapKanbanTasksBeautifulDndToMongo(kanbanTasks)
       const userWithUpdatedKanbanTasks =
-        await this.taskService.updateKanbanTasksByUserId(
+        await this.kanbanService.updateKanbanTasksByUserId(
           userId,
           mappedKanbanTasks,
         )
@@ -229,19 +232,19 @@ export class TaskController {
         return
       }
 
-      const kanbanTasks = await this.taskService.getKanbanTasksByUserId(userId)
+      const kanbanTasks = await this.kanbanService.getKanbanTasksByUserId(userId)
       const updatedKanbanTasks =
-        await this.taskService.removeColumnFromKanbanTasks(
+        await this.kanbanService.removeColumnFromKanbanTasks(
           kanbanTasks,
           columnId,
         )
       const userWithUpdatedKanbanTasks =
-        await this.taskService.updateKanbanTasksByUserId(
+        await this.kanbanService.updateKanbanTasksByUserId(
           userId,
           updatedKanbanTasks,
         )
 
-      await this.taskService.deleteTasksFromRemovedColumn(kanbanTasks, columnId)
+      await this.kanbanService.deleteTasksFromRemovedColumn(kanbanTasks, columnId)
 
       res.status(201).json(userWithUpdatedKanbanTasks)
     } catch (error: unknown) {
@@ -266,16 +269,16 @@ export class TaskController {
         return
       }
 
-      const kanbanTasks = await this.taskService.getKanbanTasksByUserId(userId)
-      const newColumnId = this.taskService.getNewColumnId(kanbanTasks)
-      const updatedKanbanTasks = this.taskService.addNewColumnToKanbanTasks(
+      const kanbanTasks = await this.kanbanService.getKanbanTasksByUserId(userId)
+      const newColumnId = this.kanbanService.getNewColumnId(kanbanTasks)
+      const updatedKanbanTasks = this.kanbanService.addNewColumnToKanbanTasks(
         kanbanTasks,
         newColumnId,
         title,
       )
 
       const userWithUpdatedKanbanTasks =
-        await this.taskService.updateKanbanTasksByUserId(
+        await this.kanbanService.updateKanbanTasksByUserId(
           userId,
           updatedKanbanTasks,
         )
@@ -303,16 +306,16 @@ export class TaskController {
         return
       }
 
-      const kanbanTasks = await this.taskService.getKanbanTasksByUserId(userId)
+      const kanbanTasks = await this.kanbanService.getKanbanTasksByUserId(userId)
       const updatedKanbanTasks =
-        this.taskService.getKanbanTasksWithUpdatedColumnName(
+        this.kanbanService.getKanbanTasksWithUpdatedColumnName(
           kanbanTasks,
           columnId,
           title,
         )
 
       const userWithUpdatedKanbanTasks =
-        await this.taskService.updateKanbanTasksByUserId(
+        await this.kanbanService.updateKanbanTasksByUserId(
           userId,
           updatedKanbanTasks,
         )

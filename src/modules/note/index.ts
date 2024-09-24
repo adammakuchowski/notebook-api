@@ -1,1 +1,1 @@
-export {noteRouter} from './routes/noteRouter'
+export {noteRouter} from './noteEndpoints'

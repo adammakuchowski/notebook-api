@@ -1,102 +1,51 @@
-import {Document} from 'mongoose'
-
-import {NoteModel} from '../../../db/models/noteModel'
 import {EditNote, NewNoteData, Note} from '../types'
-import {noteProjection} from '../constatns'
+import {Container} from 'typedi/Container'
+import {NoteRepository} from '../noteRepository'
 
-export const getNoteById = async (
-  _id: string,
-  userId: string,
-): Promise<Note | null> => {
-  const note = await NoteModel.findOne(
-    {
-      _id,
-      userId,
-      deletedAt: {$eq: null},
-    },
-    noteProjection,
-  ).lean()
+export class NoteService {
+  private readonly noteRepository
 
-  return note
-}
+  constructor() {
+    this.noteRepository = Container.get(NoteRepository)
+  }
 
-export const createNewNote = async ({
-  title,
-  text,
-  userId,
-}: NewNoteData): Promise<Document> => {
-  const newNoteModel = new NoteModel({title, text, userId})
-  const newNote = await newNoteModel.save()
+  async getNoteById(_id: string, userId: string): Promise<Note | null> {
+    const note = await this.noteRepository.findById(_id)
 
-  return newNote
-}
+    return note
+  }
 
-export const findAllNotes = async (userId: string): Promise<Note[]> => {
-  const allNotes = await NoteModel.find(
-    {
-      userId,
-      deletedAt: {$eq: null},
-    },
-    noteProjection,
-  )
-    .limit(100)
-    .lean()
+  async createNewNote({title, text, userId}: NewNoteData): Promise<Note> {
+    const newNote = await this.noteRepository.create({title, text, userId})
 
-  return allNotes
-}
+    return newNote
+  }
 
-export const editNoteById = async ({
-  id,
-  title,
-  text,
-  userId,
-}: EditNote): Promise<Note | null> => {
-  const result = await NoteModel.findByIdAndUpdate(
-    {
-      _id: id,
-      userId,
-    },
-    {
-      $set: {
-        title,
-        text,
-      },
-    },
-    {
-      new: true,
-      lean: true,
-    },
-  )
+  async findAllNotes(userId: string): Promise<Note[]> {
+    const allNotes = await this.noteRepository.findAll({userId})
 
-  return result
-}
+    return allNotes
+  }
 
-export const softDeleteNoteById = async (
-  _id: string,
-  userId: string,
-): Promise<Note | null> => {
-  const currentDate = new Date()
-  const result = await NoteModel.findByIdAndUpdate(
-    {
-      _id,
-      userId,
-    },
-    {
-      $set: {
-        deletedAt: currentDate,
-      },
-    },
-    {
-      new: true,
-      lean: true,
-    },
-  )
+  async editNoteById({
+    id,
+    title,
+    text,
+    userId,
+  }: EditNote): Promise<Note | null> {
+    const noteDelta = {
+      title,
+      text,
+    }
 
-  return result
-}
+    const result = await this.noteRepository.update(id, noteDelta)
 
-export const deleteNoteById = async (_id: string): Promise<Document | null> => {
-  const result = await NoteModel.findByIdAndDelete({_id})
+    return result
+  }
 
-  return result
+  async softDeleteNoteById(_id: string): Promise<boolean> {
+    const result =  await this.noteRepository.softDelete([_id])
+
+    return result
+  }
 }
