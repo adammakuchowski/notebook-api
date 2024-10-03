@@ -39,10 +39,9 @@ export class KanbanService {
   ): Promise<KanbanTasks> {
     const {tasks: taskIds} = kanbanTasks
 
-    const tasks = await this.taskRepository.findAllByField(
-      '_id',
-      taskIds as string[],
-    )
+    const tasks = await this.taskRepository.findAll({
+      _id: {$in: taskIds as string[]},
+    })
 
     const mappedKanbanTasks: KanbanTasks = {
       ...kanbanTasks,

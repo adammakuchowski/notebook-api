@@ -16,9 +16,23 @@ export class UserService {
     this.userRepository = Container.get(UserRepository)
   }
 
+  async getUserById(id: string): Promise<User | null> {
+    try {
+      const user = await this.userRepository.findById(id)
+
+      return user
+    } catch (error) {
+      logger.error(`[getUserById]: ${(error as Error).message}`)
+
+      throw new Error(
+        'An error occurred while checking the existence of the user',
+      )
+    }
+  }
+
   async getUserByField(field: string, value: unknown): Promise<User | null> {
     try {
-      const user = await this.userRepository.findByField(field, value)
+      const user = await this.userRepository.findOneByField(field, value)
 
       return user
     } catch (error) {
