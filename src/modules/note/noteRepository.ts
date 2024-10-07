@@ -12,22 +12,19 @@ export class NoteRepository implements Repository<Note> {
     return note
   }
 
-  async findAll(params?: Record<string, unknown>): Promise<Note[]> {
-    const userId = params?.userId
-    if (!userId) {
-      throw new Error('userId is required for finding notes')
-    }
-    
-    const note = await NoteModel.find({
-        userId,
-        deletedAt: {$eq: null},
-      })
+  async findAll(filter: Record<string, unknown>, includeDeleted = false): Promise<Note[]> {
+    const query = {
+      ...filter,
+      ...(includeDeleted ? {} : { deletedAt: { $eq: null } })
+    };
+  
+    const notes = await NoteModel.find(query)
       .limit(100)
-      .lean()
-
-    return note
+      .lean();
+  
+    return notes;
   }
-
+  
   async create(noteData: NewNoteData): Promise<Note> {
     const newNote = new NoteModel(noteData)
     await newNote.save()

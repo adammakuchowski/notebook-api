@@ -12,14 +12,16 @@ export class TaskRepository implements Repository<Task> {
     return task
   }
 
-  async findByField(field: string, value: unknown): Promise<Task | null> {
-    const task = await TaskModel.findOne({[field]: value})
+  async findAll(
+    filter: Record<string, unknown>,
+    includeDeleted = false,
+  ): Promise<Task[]> {
+    const query = {
+      ...filter,
+      ...(includeDeleted ? {} : {deletedAt: {$eq: null}}),
+    }
 
-    return task
-  }
-
-  async findAllByField(field: string, values: unknown[]): Promise<Task[]> {
-    const tasks = await TaskModel.find({[field]: {$in: values}})
+    const tasks = await TaskModel.find(query)
 
     return tasks
   }

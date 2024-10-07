@@ -129,7 +129,7 @@ export class UserController {
       const {refreshToken}: RefreshUserTokenProps = req.body
 
       const data = await this.userService.verifyRefreshToken(refreshToken)
-      const user = await this.userService.getUserByField('_id', data.id)
+      const user = await this.userService.getUserById(data.id as string)
 
       if (!user?._id) {
         logger.warn('[refreshUserToken]: user does not exists')

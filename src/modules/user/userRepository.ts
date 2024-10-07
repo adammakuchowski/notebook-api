@@ -2,7 +2,7 @@ import {UserModel} from '../../db/models/userModel'
 import {Repository} from '../types'
 import {User} from './types'
 
-export class UserRepository implements Repository<User> {
+export class UserRepository implements Omit<Repository<User>, 'findAll'> {
   async findById(id: string, projection?: Record<string, unknown>): Promise<User | null> {
     const user = await UserModel.findOne({
       _id: id,
@@ -14,7 +14,7 @@ export class UserRepository implements Repository<User> {
     return user
   }
 
-  async findByField(field: string, value: unknown): Promise<User | null> {
+  async findOneByField(field: string, value: unknown): Promise<User | null> {
     const user = await UserModel.findOne({[field]: value})
 
     return user
