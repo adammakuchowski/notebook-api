@@ -3,7 +3,7 @@ import {NextFunction, Response} from 'express'
 import {logger} from '../../app'
 import {NoteService} from './services/noteService'
 import {CreateNoteBody, EditNoteBody} from './types'
-import {AuthRequest} from '../../modules/user/types'
+import {AuthRequest} from '../user/types'
 import {sendBadRequest} from '../utils/responseUtils'
 import {Container} from 'typedi/Container'
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import {Note} from '../../modules/note/types'
+import {Note} from '../../api/note/types'
 
 const noteSchema = new mongoose.Schema<Note>(
   {

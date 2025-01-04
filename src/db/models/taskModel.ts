@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import {Task} from '../../modules/task/types'
+import {Task} from '../../api/task/types'
 
 const taskSchema = new mongoose.Schema<Task>(
   {
