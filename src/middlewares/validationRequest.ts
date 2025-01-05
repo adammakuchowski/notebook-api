@@ -2,7 +2,7 @@ import {Response, NextFunction} from 'express'
 import {z} from 'zod'
 
 import {logger} from '../app'
-import {AuthRequest} from '../modules/user/types'
+import {AuthRequest} from '../api/user/types'
 
 type RequestKeys = 'body' | 'params' | 'query'
 

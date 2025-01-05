@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import {KanbanColumn, KanbanTasks} from '../../modules/task/types'
+import {KanbanColumn, KanbanTasks} from '../../api/task/types'
 
 const columnSchema = new mongoose.Schema<KanbanColumn>(
   {

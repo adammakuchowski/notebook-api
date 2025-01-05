@@ -11,9 +11,9 @@ import loggerConfig from './configs/winstonConfig'
 import errorHandler from './middlewares/errorHandler'
 import notFound from './middlewares/notFoundHandler'
 import {connectDB} from './db/db'
-import {userRouter} from './modules/user'
-import {noteRouter} from './modules/note'
-import {taskRouter} from './modules/task'
+import {userRouter} from './api/user'
+import {noteRouter} from './api/note'
+import {taskRouter} from './api/task'
 
 const {port} = appConfig
 export const logger = winston.createLogger(loggerConfig)
