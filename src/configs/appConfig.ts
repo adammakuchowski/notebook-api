@@ -5,7 +5,7 @@ dotenv()
 interface DatabaseConfig {
   host: string
   port: number
-  username: string
+  user: string
   password: string
   name: string
   userLimit: number
@@ -18,17 +18,19 @@ interface AuthorizationConfig {
 }
 
 interface AppConfig {
+  env: string;
   port: number
   database: DatabaseConfig
   authorization: AuthorizationConfig
 }
 
 const appConfig: AppConfig = {
+  env: process.env.NODE_ENV ?? 'development',
   port: Number(process.env.PORT ?? 3000),
   database: {
-    host: process.env.DB_HOST ?? '127.0.0.1',
+    host: process.env.DB_HOST ?? 'localhost',
     port: Number(process.env.DB_PORT ?? 27017),
-    username: process.env.DB_USERNAME ?? 'user',
+    user: process.env.DB_USER ?? 'user',
     password: process.env.DB_PASSWORD ?? 'password',
     name: process.env.DB_NAME ?? 'my_database',
     mongoUrl: process.env.MONGO_URL,
